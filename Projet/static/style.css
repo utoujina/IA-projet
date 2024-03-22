@@ -1,0 +1,58 @@
+
+.container {
+    margin-top: 60px;
+}
+
+.bg0 {
+    background-color: #fff3cd; }
+#chat {
+    height: 300px; /* Ajustez la hauteur selon vos besoins */
+    overflow-y: auto; /* Ajoute une barre de défilement verticale si nécessaire */
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+/* Ajustez la taille des messages et ajoutez une barre de défilement si nécessaire */
+#messages {
+    height: 200px;
+    overflow-y: scroll;
+    border-bottom: 1px solid #212529;
+}
+
+/* Stylez le formulaire de message */
+#message-form {
+    margin-top: 10px;
+}
+
+/* Ajustez la taille de la zone de saisie de message */
+#message-input {
+    width: calc(100% - 70px); /* Déduisez la largeur du bouton d'envoi */
+}
+
+/* Ajoutez une petite marge à droite entre la zone de saisie de message et le bouton d'envoi */
+#message-input,
+button {
+    margin-right: 5px;
+}
+
+/* Stylez les différentes parties de la légende */
+
+.bg1 {
+    background-color: rgb(229, 168, 127);
+    color: black;
+    padding: 10px; /* Ajoutez un peu d'espace autour du contenu */
+    margin-bottom: 10px; /* Ajoutez une marge en bas pour séparer les sections */
+}
+
+.bg2 {
+    background-color: rgba(226, 125, 105, 0.927);
+    color: black;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.bg3 {
+    background-color: rgb(110 228 118 / 93%);
+    color: black;
+    padding: 10px;
+}
