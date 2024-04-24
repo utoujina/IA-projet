@@ -4,7 +4,9 @@ session.consult("./static/prolog/tbot.pl");
 
 function askQuestion(question) {
     
-    pl_query = "tour2france([" + question.split(' ').map(mot => "\"" + mot + "\"").join(',') + "], Reponse).";
+    // Suppresion des apostrophes
+    let inputSansApostrophes = question.replace(/'/g, ' ');
+    pl_query = "tour2france([" + inputSansApostrophes.split(' ').map(mot => '\'' + mot + '\'').join(',') + "], Reponse).";
     session.query(pl_query);
     console.log(pl_query);
     
