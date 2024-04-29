@@ -17,6 +17,3 @@ def on_startup():
 
 def on_shutdown():
     print("Bye bye!")
-
-
-

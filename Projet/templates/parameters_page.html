@@ -1,0 +1,132 @@
+{%extends "BasicTemplate.html" %}
+
+{% block style %}
+<style>    
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #fff3cd;
+    }
+        
+    h1, h2 {
+        margin-top: 1em;
+        text-align: center;
+    }
+    
+    .grid-container {
+        display: grid;
+        grid-template-columns: auto auto;
+        justify-content: center;
+        justify-items: stretch;
+        gap: 1em 5em;
+        margin-top: 2em;
+    }
+    
+    .grid-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .grid-item img {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .grid-item form {
+        margin-top: 5px;
+    }
+    
+    .grid-item input[type="radio"] {
+        margin-right: 5px;
+    }
+    
+    #choices-form button {
+        margin-top: 20px;
+    }
+    
+    #choices-form {
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<body>
+    <h1>Welcome to the Tour de France game</h1>
+    <h2>Choose your game settings</h2>
+    
+    <form id="choices-form" method="post">
+        <div class="grid-container">
+            <div class="grid-item">
+                <img src="../static/image/be.svg" alt="BEL" class="img-fluid">
+                <div>
+                    <input class="form-check-input" type="radio" id="BEL1" name="BEL" value="Human" checked/>
+                    <label class="form-check-label" for="BEL1">Human</label>
+
+                    <input class="form-check-input" type="radio" id="BEL2" name="BEL" value="IA" />
+                    <label class="form-check-label" for="BEL2">IA</label>
+                </div>
+            </div>
+            <div class="grid-item">
+                <img src="../static/image/it.svg" alt="ITA" class="img-fluid">
+                <div>
+                    <input class="form-check-input" type="radio" id="ITA1" name="ITA" value="Human" />
+                    <label class="form-check-label" for="ITA1">Human</label>
+
+                    <input class = "form-check-input" type="radio" id="ITA2" name="ITA" value="IA" checked/>
+                    <label class="form-check-label" for="ITA2">IA</label>
+                </div>
+            </div>
+            <div class="grid-item">
+                <img src="../static/image/de.svg" alt="DEU" class="img-fluid">
+                <div>
+                    <input class="form-check-input" type="radio" id="DEU1" name="DEU" value="Human" checked/>
+                    <label class="form-check-label" for="DEU1">Human</label>
+
+                    <input class = "form-check-input" type="radio" id="DEU2" name="DEU" value="IA" />
+                    <label class="form-check-label" for="DEU2">IA</label>
+                </div>
+            </div>
+            <div class="grid-item">
+                <img src="../static/image/nl.svg" alt="NLD" class="img-fluid">
+                <div>
+                    <input class="form-check-input" type="radio" id="NLD1" name="NLD" value="Human" />
+                    <label class="form-check-label" for="NLD1">Human</label>
+
+                    <input class="form-check-input" type="radio" id="NLD2" name="NLD" value="IA" checked/>
+                    <label class="form-check-label" for="NLD2">IA</label>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn btn-outline-primary" type="submit" onclick="submit_data()">Next</button>
+    </form> 
+</body>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function submit_data(){
+        
+        let form_data = new FormData();
+        form_data.append('BEL', document.querySelectorAll("input[name='BEL']:checked").value);
+        form_data.append('ITA', document.querySelectorAll("input[name='ITA']:checked").value);
+        form_data.append('DEU', document.querySelectorAll("input[name='DEU']:checked").value);
+        form_data.append('NLD', document.querySelectorAll("input[name='NLD']:checked").value);
+        
+        fetch("/", {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: form_data
+        })
+        .then((Response) => response.json())
+        .then((data) => {
+            console.log(data)
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+    }
+</script>
+{% endblock %}
