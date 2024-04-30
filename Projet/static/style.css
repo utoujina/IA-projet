@@ -3,8 +3,6 @@
     margin-top: 60px;
 }
 
-.bg0 {
-    background-color: #fff3cd; }
 #chat {
     height: 300px; /* Ajustez la hauteur selon vos besoins */
     overflow-y: auto; /* Ajoute une barre de défilement verticale si nécessaire */
@@ -22,6 +20,7 @@
 /* Stylez le formulaire de message */
 #message-form {
     margin-top: 10px;
+    /*margin-bottom: 100px;*/
 }
 
 /* Ajustez la taille de la zone de saisie de message */
@@ -33,6 +32,22 @@
 #message-input,
 button {
     margin-right: 5px;
+    margin-top: 5px;
+}
+
+.list-container {
+    height: 250px;
+    overflow-y: auto; /* Activation du défilement horizontal */
+    margin-bottom: 10px;
+}
+
+.flag {
+    width: 125px;
+    height: 94px;
+    margin-top: -30px;
+    margin-left: 20px;
+    position: absolute;
+    z-index: 9999;
 }
 
 /* Stylez les différentes parties de la légende */
@@ -45,13 +60,6 @@ button {
 }
 
 .bg2 {
-    background-color: rgba(226, 125, 105, 0.927);
-    color: black;
-    padding: 10px;
-    margin-bottom: 10px;
-}
-
-.bg3 {
     background-color: rgb(110 228 118 / 93%);
     color: black;
     padding: 10px;

@@ -1,4 +1,4 @@
-{%extends "BasicTemplate.html" %}
+{%extends "simple_template.html" %}
 
 {% block style %}
 <style>    
@@ -17,7 +17,7 @@
         grid-template-columns: auto auto;
         justify-content: center;
         justify-items: stretch;
-        gap: 1em 5em;
+        gap: 2em 5em;
         margin-top: 2em;
     }
     
@@ -29,8 +29,9 @@
     }
     
     .grid-item img {
-        width: 150px;
+        width: 200px;
         height: 150px;
+        margin-bottom: 1em;
     }
     
     .grid-item form {
@@ -48,51 +49,55 @@
     #choices-form {
         text-align: center;
     }
+    
+    input[type="radio"][value="IA"]{
+        margin-left: 10px;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <body>
-    <h1>Welcome to the Tour de France game</h1>
-    <h2>Choose your game settings</h2>
+    <h1>Bienvenue au jeu du Tour de France</h1>
+    <h2>Choisissez vos paramètres de jeu</h2>
     
     <form id="choices-form" method="post">
         <div class="grid-container">
             <div class="grid-item">
-                <img src="../static/image/be.svg" alt="BEL" class="img-fluid">
+                <img src="../static/image/be.png" alt="BEL" class="img-fluid">
                 <div>
                     <input class="form-check-input" type="radio" id="BEL1" name="BEL" value="Human" checked/>
-                    <label class="form-check-label" for="BEL1">Human</label>
+                    <label class="form-check-label" for="BEL1">Humain</label>
 
                     <input class="form-check-input" type="radio" id="BEL2" name="BEL" value="IA" />
                     <label class="form-check-label" for="BEL2">IA</label>
                 </div>
             </div>
             <div class="grid-item">
-                <img src="../static/image/it.svg" alt="ITA" class="img-fluid">
+                <img src="../static/image/it.png" alt="ITA" class="img-fluid">
                 <div>
                     <input class="form-check-input" type="radio" id="ITA1" name="ITA" value="Human" />
-                    <label class="form-check-label" for="ITA1">Human</label>
+                    <label class="form-check-label" for="ITA1">Humain</label>
 
                     <input class = "form-check-input" type="radio" id="ITA2" name="ITA" value="IA" checked/>
                     <label class="form-check-label" for="ITA2">IA</label>
                 </div>
             </div>
             <div class="grid-item">
-                <img src="../static/image/de.svg" alt="DEU" class="img-fluid">
+                <img src="../static/image/de.png" alt="DEU" class="img-fluid">
                 <div>
                     <input class="form-check-input" type="radio" id="DEU1" name="DEU" value="Human" checked/>
-                    <label class="form-check-label" for="DEU1">Human</label>
+                    <label class="form-check-label" for="DEU1">Humain</label>
 
                     <input class = "form-check-input" type="radio" id="DEU2" name="DEU" value="IA" />
                     <label class="form-check-label" for="DEU2">IA</label>
                 </div>
             </div>
             <div class="grid-item">
-                <img src="../static/image/nl.svg" alt="NLD" class="img-fluid">
+                <img src="../static/image/nl.png" alt="NLD" class="img-fluid">
                 <div>
                     <input class="form-check-input" type="radio" id="NLD1" name="NLD" value="Human" />
-                    <label class="form-check-label" for="NLD1">Human</label>
+                    <label class="form-check-label" for="NLD1">Humain</label>
 
                     <input class="form-check-input" type="radio" id="NLD2" name="NLD" value="IA" checked/>
                     <label class="form-check-label" for="NLD2">IA</label>

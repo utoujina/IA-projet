@@ -13,12 +13,6 @@ def display_home_page(request: Request):
         context={'request': request}
     )
 
-@router.get('/homePage')
-def display_home_page(request: Request):
-    return templates.TemplateResponse(
-        "HomePageGame.html",
-        context={'request': request}
-    )
 
 @router.post("/")
 async def submit_choices(request: Request, BEL: str = Form(...), ITA: str = Form(...), DEU: str = Form(...), NLD: str = Form(...)):
@@ -28,7 +22,10 @@ async def submit_choices(request: Request, BEL: str = Form(...), ITA: str = Form
     service.modify_player_type("DEU", DEU)
     service.modify_player_type("NLD", NLD)
     
+    players = service.get_all_players_in_order()
+    current_team = service.get_current_team()
+    
     return templates.TemplateResponse(
-        "HomePageGame.html",
-        context={'request': request}
+        "basic_home_page.html",
+        context={'request': request, 'players': players, 'current_team': current_team}
     )

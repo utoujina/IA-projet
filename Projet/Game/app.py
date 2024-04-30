@@ -5,7 +5,7 @@ from fastapi.staticfiles import StaticFiles
 
 from Game.routes.game import router as game_router
 
-app = FastAPI(title="Books")
+app = FastAPI(title="Game")
 app.include_router(game_router)
 app.mount("/static", StaticFiles(directory="../Projet/static"), name="static")
 templates = Jinja2Templates(directory="templates")

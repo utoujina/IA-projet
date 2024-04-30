@@ -1,0 +1,86 @@
+{%extends "simple_template.html" %}
+
+{% from "macro.html" import display %}
+
+{% block style %}
+<link rel="stylesheet" href="/static/style.css">
+<style>
+    body {
+        background-color: #fff3cd; 
+    }
+</style>
+
+{% block style_sup %}
+{% endblock %}
+
+{% endblock %}
+    
+{% block content %}
+
+<div>
+    {% if current_team == "BEL" %}
+    <img src="../static/image/be.png" alt="Drapeau du joueur actuel" class="flag">
+    
+    {% elif current_team == "NLD" %}
+    <img src="../static/image/nl.png" alt="Drapeau du joueur actuel" class="flag">
+    
+    {% elif current_team == "ITA" %}
+    <img src="../static/image/it.png" alt="Drapeau du joueur actuel" class="flag">
+    
+    {% elif current_team == "DEU" %}
+    <img src="../static/image/de.png" alt="Drapeau du joueur actuel" class="flag">
+    
+    {% endif %}  
+</div>
+
+<div class="container">
+    
+    <div class="row">
+        <div class="col-md-8">
+            <img src="../static/image/carte.png" alt="Carte du jeux" class="img-fluid">
+        </div>
+        <div class="col-md-4">
+            
+            <div class="list-container">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Player</th>
+                            <th>Position</th>
+                        </tr>
+                        </thead>
+                    <tbody>
+                        <tr>
+                            {% for player in players %}
+                            {{ display(player) }}
+                            {% endfor %}
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="bg2" id="chat">
+                <div id="messages">TBot : Bienvenue ! Vous êtes l'équipe belge dans le Tour de France ! Besoin d'aide ? Posez-moi vos questions pendant le jeu ! Appuyez sur "SUIVANT" pour démarrer. </div>
+                <div>
+                <form id="message-form">
+                    <input type="text" id="message-input" placeholder="Posez une question...">
+                    <button type="submit">Envoyer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block content_sup %}
+{% endblock %}
+    
+{% block scripts %}
+<script src="../static/js/node_modules/tau-prolog/modules/core.js"></script>
+<script src="../static/js/node_modules/tau-prolog/modules/lists.js"></script>
+<script src="../static/js/node_modules/tau-prolog/modules/random.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="../static/js/test.js"></script>
+{% endblock %}
