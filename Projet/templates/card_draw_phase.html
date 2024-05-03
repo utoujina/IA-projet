@@ -23,13 +23,8 @@
 </style>
 {% endblock %}
 
-{% block message %}
-TBot : Voici les cartes secondes que l'équipe {{ current_team }} a tirées !
-<div>TBot : Appuyez sur suivant pour continuer.</div>
-{% endblock %}
-
 {% block content_sup %}
-<a href="/tirage_carte" class="btn btn-secondary" id="button_suivant">Suivant</a>
+<a href="/game" class="btn btn-secondary" id="button_suivant">Suivant</a>
 
 <div class="cards">
     {% for card in cards %}
@@ -37,4 +32,11 @@ TBot : Voici les cartes secondes que l'équipe {{ current_team }} a tirées !
     {% endfor %}
 </div>
 
+{% endblock %}
+
+{% block scripts_sup %}
+<script>
+    displayMessage("TBot : Voici les cartes secondes que l'équipe {{ current_team }} a tirées !");
+    displayMessage("TBot : Appuyez sur suivant pour continuer.");
+</script>
 {% endblock %}

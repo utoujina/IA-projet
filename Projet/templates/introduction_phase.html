@@ -8,11 +8,13 @@
 </style>
 {% endblock %}
 
-{% block message %}
-TBot : Bienvenue ! Vous êtes l'équipe belge dans le Tour de France ! Besoin d'aide ? Posez-moi vos questions pendant le jeu ! Appuyez sur "Suivant" pour démarrer.
-<div>TBot : La première étape sera de tirer les cartes !</div>
+{% block content_sup %}
+<a href="/game" class="btn btn-secondary" id="button_suivant">Suivant</a>
 {% endblock %}
 
-{% block content_sup %}
-<a href="/tirage_carte" class="btn btn-secondary" id="button_suivant">Suivant</a>
+{% block scripts_sup %}
+<script>
+    displayMessage("TBot : Bienvenue ! Vous êtes l'équipe belge dans le Tour de France ! Besoin d'aide ? Posez-moi vos questions pendant le jeu ! Appuyez sur \"Suivant\" pour démarrer.");
+    displayMessage("TBot : La première étape sera de tirer les cartes !");
+</script>
 {% endblock %}

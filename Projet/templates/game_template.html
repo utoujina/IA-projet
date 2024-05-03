@@ -3,7 +3,7 @@
 {% from "macro.html" import display_players %}
 
 {% block style %}
-<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/style/game_template.css">
 
 {% block style_sup %}
 {% endblock %}
@@ -56,7 +56,7 @@
             </div>
             
             <div class="bg2" id="chat">
-                <div id="messages">{% block message %} {% endblock %}</div>
+                <div id="messages"></div>
                 <div>
                 <form id="message-form">
                     <input type="text" id="message-input" placeholder="Posez une question..." class="form-control">
@@ -78,5 +78,10 @@
 <script src="../static/js/node_modules/tau-prolog/modules/lists.js"></script>
 <script src="../static/js/node_modules/tau-prolog/modules/random.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-<script src="../static/js/test.js"></script>
+<script src="../static/js/chat.js"></script>
+
+{% block scripts_sup %}
 {% endblock %}
+
+{% endblock %}
+

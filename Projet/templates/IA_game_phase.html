@@ -23,13 +23,8 @@
 </style>
 {% endblock %}
 
-{% block message %}
-TBot : L’équipe XXX a fait avancer son joueur XXX de XX secondes. Il est maintenant en case (XX, XX).
-<div>TBot : Appuyez sur suivant pour continuer.</div>
-{% endblock %}
-
 {% block content_sup %}
-<a href="/tirage_carte" class="btn btn-secondary" id="button_suivant">Suivant</a>
+<a href="/game" class="btn btn-secondary" id="button_suivant">Suivant</a>
 
 <div class="cards">
     {% for card in cards %}
@@ -37,4 +32,11 @@ TBot : L’équipe XXX a fait avancer son joueur XXX de XX secondes. Il est main
     {% endfor %}
 </div>
 
+{% endblock %}
+
+{% block scripts_sup %}
+<script>
+    displayMessage("TBot : L’équipe XXX a fait avancer son joueur XXX de XX secondes. Il est maintenant en case (XX, XX).");
+    displayMessage("TBot : Appuyez sur suivant pour continuer.");
+</script>
 {% endblock %}

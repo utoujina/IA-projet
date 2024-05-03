@@ -36,13 +36,8 @@
 </style>
 {% endblock %}
 
-{% block message %}
-TBot : Sélectionnez la carte secondes à utiliser pour le joueur XX de votre équipe et la case sur laquelle il va se positionner.
-<div>TBot : Appuyez sur suivant pour continuer.</div>
-{% endblock %}
-
 {% block content_sup %}
-<a href="/tirage_carte" class="btn btn-secondary" id="button_suivant">Suivant</a>
+<a href="/game" class="btn btn-secondary" id="button_suivant">Suivant</a>
 
 <div class="cards">
     {% for card in cards %}
@@ -62,4 +57,11 @@ TBot : Sélectionnez la carte secondes à utiliser pour le joueur XX de votre é
     </div>
 </div>
 
+{% endblock %}
+
+{% block scripts_sup %}
+<script>
+    displayMessage("TBot : Sélectionnez la carte secondes à utiliser pour le joueur XX de votre équipe et la case sur laquelle il va se positionner.");
+    displayMessage("TBot : Appuyez sur suivant pour continuer.");
+</script>
 {% endblock %}

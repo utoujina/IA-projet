@@ -33,7 +33,7 @@ class Card(BaseModel):
     -----
     There are 112 possible cards (8 times cards from 1 to 12).
     """
-    cards: set[int] = Field(max_length = 5)
+    cards: list[int]
     
 class Cards(BaseModel):
     """
@@ -65,3 +65,9 @@ class Team(BaseModel):
     A class representing the different teams
     """
     team: Literal["BEL", "DEU", "NLD", "ITA"]
+    
+class Counter(BaseModel):
+    """
+    A class repreenting a counter of lap.
+    """
+    counter: int

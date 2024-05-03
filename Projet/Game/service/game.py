@@ -1,5 +1,5 @@
 from typing import Tuple
-from Game.schemas.player import Player, Card, Type, Team, Players
+from Game.schemas.player import Player, Card, Type, Team, Players, Counter
 from Game.database import database
 import random
 
@@ -16,7 +16,6 @@ def modify_pos(Team: str, ID: int, New_pos: Tuple[int, int]) -> Player:
     database["players"][Team][ID]["position"] = New_pos
     return database["players"][Team][ID]
     
-
 def get_ranking(Team: str, ID: int) -> int:
     """
     Return the ranking of a player
@@ -31,7 +30,7 @@ def modify_ranking(Team: str, ID: int, New_rank: int) -> Player:
     return database["players"][Team][ID]
 
     
-def get_cards(Team: str) -> set[Card]:
+def get_cards(Team: str) -> list[Card]:
     """
     Return the set of cards of the player
     """
@@ -41,14 +40,14 @@ def push_card(Team: str, value: int) -> Card:
     """
     Add a card, and return the set of cards of the player containning the new card
     """
-    database["cards"][Team].add(value)
+    database["cards"][Team].append(value)
     return database["cards"][Team]
 
 def pop_card(Team: str, value: int) -> Card:
     """
     Delete the card, and return the set of card without the card
     """
-    database["cards"][Team].discard(value)
+    database["cards"][Team].remove(value)
     return database["cards"][Team]
 
 def get_player_type(Team: str) -> Type:
@@ -93,6 +92,32 @@ def modify_current_team(New_team: Team) -> Team:
     database["current_team"] = New_team
     return database["current_team"]
 
+def get_counter() -> Counter:
+    """
+    Get the current counter
+    """
+    return database["counter"]
+
+def modify_counter(New_counter: Counter) -> Counter:
+    """
+    Modify the current counter
+    """
+    database["counter"] = New_counter
+    return New_counter
+
+def is_game_over() -> bool:
+    """
+    Variable saying whether the game is over or not 
+    """
+    return database["game_over"]
+
+def set_game_over() -> bool:
+    """
+    Function that ends the game
+    """
+    database["game_over"] = True
+    return database["game_over"]
+
 def get_all_players_in_order() -> Players:
     """
     Return all the players participating to the game by order of ranking
@@ -118,7 +143,7 @@ def get_all_players_in_order() -> Players:
     
     return sorted_players
 
-def tirage_aléatoire() -> set[Card]:
+def tirage_aléatoire() -> list[Card]:
     """
     Return 5 cards from the pack of card
     
@@ -127,18 +152,22 @@ def tirage_aléatoire() -> set[Card]:
     Each card has the same probability of being drawn 
     but the draw chance takes into account the number of similar cards still in play
     """
-    paquet = list(database["cards"]["Pack"])
+    paquet = database["cards"]["Pack"]
     tirage = []
     
     for i in range(5):
-        # Calcul des probabilités 
-        proba = [1 / len(paquet) for _ in paquet]
-        # Tirage aléatoire pondéré en fonction des probabilités
-        index = random.choices(range(len(paquet)), weights=proba)[0]
-        # Retrait de la carte tirée du paquet
-        carte = paquet.pop(index)
-        # Ajout de la carte tirée à la liste des tirages
-        tirage.append(carte)
+        if paquet:
+            # Calcul des probabilités 
+            proba = [1 / len(paquet) for _ in paquet]
+            # Tirage aléatoire pondéré en fonction des probabilités
+            index = random.choices(range(len(paquet)), weights=proba)[0]
+            # Retrait de la carte tirée du paquet
+            carte = paquet.pop(index)
+            # Ajout de la carte tirée à la liste des tirages
+            tirage.append(carte)
+            
+        else:
+            break
         
-    database["cards"]["Pack"] = set(paquet)
+    database["cards"]["Pack"] = paquet
     return tirage
