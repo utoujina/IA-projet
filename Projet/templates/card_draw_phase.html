@@ -1,0 +1,40 @@
+{%extends "game_template.html" %}
+
+{% from "macro.html" import display_cards %}
+
+{% block style_sup %}
+<style>
+    #button_suivant {
+        margin-top: 5px;
+    }
+    
+    .card {
+        display: inline-block;
+        transform: translate(100%, -300%);
+        width: 100px;
+        height: 125px;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        z-index: 999;
+    }
+</style>
+{% endblock %}
+
+{% block message %}
+TBot : Voici les cartes secondes que l'équipe {{ current_team }} a tirées !
+<div>TBot : Appuyez sur suivant pour continuer.</div>
+{% endblock %}
+
+{% block content_sup %}
+<a href="/tirage_carte" class="btn btn-secondary" id="button_suivant">Suivant</a>
+
+<div class="cards">
+    {% for card in cards %}
+    {{ display_cards(card) }}
+    {% endfor %}
+</div>
+
+{% endblock %}

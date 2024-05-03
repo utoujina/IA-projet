@@ -33,12 +33,13 @@ class Card(BaseModel):
     -----
     There are 112 possible cards (8 times cards from 1 to 12).
     """
-    cards: set[int] = Field(max_length = 10)
+    cards: set[int] = Field(max_length = 5)
     
 class Cards(BaseModel):
     """
     A class representing cards for each country.
     """
+    Pack: set[int] = Field(max_length = 96)
     BEL: Card
     DEU: Card
     NDL: Card

@@ -1,0 +1,37 @@
+{%extends "empty_template.html" %}
+
+{% from "macro.html" import display_players %}
+
+{% block style %}
+<style>    
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #fff3cd;
+    }
+        
+</style>
+{% endblock %}
+
+{% block content %}
+<body>
+    <h1>L'équipe XX a gagné !</h1>
+    <div class="container">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Player</th>
+                    <th>Position</th>
+                </tr>
+                </thead>
+            <tbody>
+                <tr>
+                    {% for player in players %}
+                    {{ display_players(player) }}
+                    {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+{% endblock %}

@@ -1,3 +1,8 @@
+body {
+    background-color: #fff3cd;
+    height: 100vh;
+    overflow-y: hidden;
+}
 
 .container {
     margin-top: 60px;
@@ -5,7 +10,6 @@
 
 #chat {
     height: 300px; /* Ajustez la hauteur selon vos besoins */
-    overflow-y: auto; /* Ajoute une barre de défilement verticale si nécessaire */
     border: 1px solid #ccc;
     padding: 10px;
 }

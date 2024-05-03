@@ -1,8 +1,15 @@
-{% macro display(player) %}
+<!--- Macro d'affichage du classement des joueurs --->
+{% macro display_players(player) %}
 <tr>
     <td>{{ player.ranking }} :</td>
     <td>{{ player.ID }}</td>
     <td>{{ player.position }}</td>
 </tr>
+{% endmacro %}
 
+<!--- Macro d'affichage des cartes tirées --->
+{% macro display_cards(card) %}
+<div class="card">
+    <div class="value">{{ card }} sec</div>
+</div>
 {% endmacro %}

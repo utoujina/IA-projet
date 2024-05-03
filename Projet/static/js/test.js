@@ -15,7 +15,7 @@ function askQuestion(question) {
         console.log(x);
         var answer = x.links.Reponse;
         console.log(answer);
-        displayMessage("TBot : " + answer); 
+        displayMessage("TBot : " + answer);
     });
 }
 

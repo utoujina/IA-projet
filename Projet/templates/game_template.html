@@ -1,14 +1,9 @@
-{%extends "simple_template.html" %}
+{%extends "empty_template.html" %}
 
-{% from "macro.html" import display %}
+{% from "macro.html" import display_players %}
 
 {% block style %}
 <link rel="stylesheet" href="/static/style.css">
-<style>
-    body {
-        background-color: #fff3cd; 
-    }
-</style>
 
 {% block style_sup %}
 {% endblock %}
@@ -53,7 +48,7 @@
                     <tbody>
                         <tr>
                             {% for player in players %}
-                            {{ display(player) }}
+                            {{ display_players(player) }}
                             {% endfor %}
                         </tr>
                     </tbody>
@@ -61,21 +56,22 @@
             </div>
             
             <div class="bg2" id="chat">
-                <div id="messages">TBot : Bienvenue ! Vous êtes l'équipe belge dans le Tour de France ! Besoin d'aide ? Posez-moi vos questions pendant le jeu ! Appuyez sur "SUIVANT" pour démarrer. </div>
+                <div id="messages">{% block message %} {% endblock %}</div>
                 <div>
                 <form id="message-form">
-                    <input type="text" id="message-input" placeholder="Posez une question...">
-                    <button type="submit">Envoyer</button>
+                    <input type="text" id="message-input" placeholder="Posez une question..." class="form-control">
+                    <button type="submit" class="btn btn-secondary btn-sm">Envoyer</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
-{% endblock %}
-
 {% block content_sup %}
 {% endblock %}
+
+{% endblock %}
+
     
 {% block scripts %}
 <script src="../static/js/node_modules/tau-prolog/modules/core.js"></script>

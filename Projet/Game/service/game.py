@@ -1,6 +1,7 @@
 from typing import Tuple
 from Game.schemas.player import Player, Card, Type, Team, Players
 from Game.database import database
+import random
 
 def get_pos(Team: str, ID: int) -> Tuple[int, int]:
     """
@@ -30,7 +31,7 @@ def modify_ranking(Team: str, ID: int, New_rank: int) -> Player:
     return database["players"][Team][ID]
 
     
-def get_cards(Team: str) -> Card:
+def get_cards(Team: str) -> set[Card]:
     """
     Return the set of cards of the player
     """
@@ -100,13 +101,44 @@ def get_all_players_in_order() -> Players:
     -----
     In total, there are 12 players because each team has 3 players.
     """
+    # Liste globale de joueur qui sera trié
     list_player = []
+    
+    # Loop sur les pays
     for country_players in database["players"].values():
+        # Loop sur les players
         for player_data in country_players.values():
+            # Récupération des paramètres du joueur
             player = Player(ID=player_data["ID"], ranking=player_data["ranking"], position=player_data["position"])
+            # On l'ajoute à la liste globale
             list_player.append(player)
     
-    # On trie les joueur par classement
+    # Triage de la liste globale sur base du classement
     sorted_players = sorted(list_player, key=lambda x: x.ranking)
     
     return sorted_players
+
+def tirage_aléatoire() -> set[Card]:
+    """
+    Return 5 cards from the pack of card
+    
+    Notes
+    -----
+    Each card has the same probability of being drawn 
+    but the draw chance takes into account the number of similar cards still in play
+    """
+    paquet = list(database["cards"]["Pack"])
+    tirage = []
+    
+    for i in range(5):
+        # Calcul des probabilités 
+        proba = [1 / len(paquet) for _ in paquet]
+        # Tirage aléatoire pondéré en fonction des probabilités
+        index = random.choices(range(len(paquet)), weights=proba)[0]
+        # Retrait de la carte tirée du paquet
+        carte = paquet.pop(index)
+        # Ajout de la carte tirée à la liste des tirages
+        tirage.append(carte)
+        
+    database["cards"]["Pack"] = set(paquet)
+    return tirage
