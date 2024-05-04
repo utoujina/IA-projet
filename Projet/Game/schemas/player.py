@@ -71,3 +71,13 @@ class Counter(BaseModel):
     A class repreenting a counter of lap.
     """
     counter: int
+    
+class Running_order(BaseModel):
+    """
+    A class representing the order of passage of players in the game.
+    
+    Notes
+    -----
+    It can be determined by the best second card owned or by the ranking of players.
+    """
+    running_order: list[str]

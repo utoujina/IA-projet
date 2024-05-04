@@ -92,7 +92,18 @@ def modify_current_team(New_team: Team) -> Team:
     -----
     It is either BEL, DEU, NLD or ITA.
     """
-    database["current_team"] = New_team
+    database["current_team"][0] = New_team
+    return database["current_team"]
+
+def modify_current_player(New_player: int) -> Team:
+    """
+    Modify the player that is currently playing 
+    
+    Notes
+    -----
+    It is either 1, 2 or 3.
+    """
+    database["current_team"][1] = New_player
     return database["current_team"]
 
 def get_counter() -> Counter:
@@ -174,3 +185,64 @@ def tirage_aléatoire() -> list[Card]:
         
     database["cards"]["Pack"] = paquet
     return tirage
+
+def best_card(team: Team) -> int:
+    """
+    Return the value of the best card of a player
+    """
+    max = 0
+    for card in database["cards"][team]:
+        if (card > max):
+            max = card
+    return max
+
+def order_team_by_card() -> list[Team]:
+    """
+    Return an ordered list of the team based on their best card
+    """
+    teams = ["BEL", "ITA", "DEU", "NLD"]
+    team_card = []
+    for team in teams:
+        top_card = best_card(team)
+        team_card.append([team, top_card])
+    
+    ordered_teams = sorted(team_card, key=lambda x: x[1], reverse=True)
+    ordered_team_names = [team[0] for team in ordered_teams]
+    
+    return ordered_team_names
+
+def get_running_order():
+    """
+    Return the current running order
+    """
+    return database["running_order"]
+
+def change_running_order_placement_phase():
+    """
+    Change the order of passage for the first phase (the placement of players on the map). 
+    This is based on the best second card owned and the order of the players.
+    """
+    teams = order_team_by_card()
+    new_running_order = []
+    
+    for team in teams:
+        for player in database["running_order"]:
+            if player.startswith(team):
+                new_running_order.append(player)
+    
+    database["running_order"] = new_running_order
+    return database["running_order"]
+
+def change_running_order_classement_phase():
+    """
+    Change the pass order for the second phase (the dynamic game). 
+    This is based on the player ranking.
+    """
+    order = get_all_players_in_order()
+    new_running_order = []
+    
+    for player in order:
+        new_running_order.append(player.ID)
+    
+    database["running_order"] = new_running_order
+    return database["running_order"]

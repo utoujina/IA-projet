@@ -1,5 +1,5 @@
 database = {
-    "current_team": "BEL",
+    "current_team": ["BEL", 1],
     
     "counter": -1,
     
@@ -87,5 +87,7 @@ database = {
         "DEU": "IA",
         "NLD": "IA",
         "ITA": "IA",
-    }
+    },
+    
+    "running_order": ["ITA 1", "ITA 2", "ITA 3", "BEL 1", "BEL 2", "BEL 3", "DEU 1", "DEU 2", "DEU 3", "NLD 1", "NLD 2", "NLD 3"]
 }

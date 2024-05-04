@@ -1,6 +1,3 @@
-displayMessage("TBot : Sélectionnez la carte secondes à utiliser pour le joueur XX de votre équipe et la case sur laquelle il va se positionner.");
-displayMessage("TBot : Appuyez sur suivant pour continuer.");
-
 const cards = document.querySelectorAll('.card');
 const cases = document.querySelectorAll('.case');
 

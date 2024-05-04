@@ -13,16 +13,16 @@
 {% block content %}
 
 <div>
-    {% if current_team == "BEL" %}
+    {% if current_team[0] == "BEL" %}
     <img src="../static/image/be.png" alt="Drapeau du joueur actuel" class="flag">
     
-    {% elif current_team == "NLD" %}
+    {% elif current_team[0] == "NLD" %}
     <img src="../static/image/nl.png" alt="Drapeau du joueur actuel" class="flag">
     
-    {% elif current_team == "ITA" %}
+    {% elif current_team[0] == "ITA" %}
     <img src="../static/image/it.png" alt="Drapeau du joueur actuel" class="flag">
     
-    {% elif current_team == "DEU" %}
+    {% elif current_team[0] == "DEU" %}
     <img src="../static/image/de.png" alt="Drapeau du joueur actuel" class="flag">
     
     {% endif %}  

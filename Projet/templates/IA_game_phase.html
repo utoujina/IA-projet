@@ -36,7 +36,7 @@
 
 {% block scripts_sup %}
 <script>
-    displayMessage("TBot : L’équipe XXX a fait avancer son joueur XXX de XX secondes. Il est maintenant en case (XX, XX).");
+    displayMessage("TBot : L’équipe {{current_team[0]}} a fait avancer son joueur {{current_team[1]}} de XX secondes. Il est maintenant en case (XX, XX).");
     displayMessage("TBot : Appuyez sur suivant pour continuer.");
 </script>
 {% endblock %}

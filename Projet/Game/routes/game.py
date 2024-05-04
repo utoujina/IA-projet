@@ -34,29 +34,52 @@ async def submit_choices_setup(request: Request, BEL: str = Form(...), ITA: str 
 @router.get("/game")
 def game(request: Request):
     
-    ordre = ["ITA", "NLD", "BEL", "DEU"]
     new_counter = service.modify_counter(service.get_counter() + 1)
-    
     print("Counter : " + str(new_counter))
-    
-    next_team = ordre[new_counter % 4]
-    service.modify_current_team(next_team)
-    
+
     if(new_counter < 4):
         # Phase 1 : On tire les cartes pour les 4 équipes
+        # On passe à l'équipe suivante
+        ordre = ["ITA", "NLD", "BEL", "DEU"]
+        next_team = ordre[new_counter % 4]
+        service.modify_current_team(next_team)
+        
         return RedirectResponse(url="/game/tirage_carte")
+    
     else:
         # Phase 2 : Les équipes font fassent aux choix
         
         # La partie n'est pas finie
         if (not(service.is_game_over())):
             
+            # Définition de l'odre des joueurs pour la phase de placement des joueurs sur la catre
+            if(new_counter == 4):
+                service.change_running_order_placement_phase()
+                print("MAJ BEST")
+            
+            # Définiiotn de l'ordre des joueurs pour la phase qui se base sur le classement
+            # Donc on passe par là tous les 12 tours pour mettre à jour le classement
+            if(new_counter > 15 and (new_counter-4)%12 == 0):
+                # (new_counter-4) % 16 == 0
+                service.change_running_order_classement_phase()
+                print("MAJ CLASSEMENT")
+                
+            # On récupère l'odre de jeu
+            ordre = service.get_running_order()
+            
+            # Changement du prochain joueur
+            next_tour = ordre[(new_counter-4) % 12]
+            service.modify_current_team(next_tour[:3])
+            service.modify_current_player(int(next_tour[4:]))
+            
+            next_team = service.get_current_team()
+            
             # Le joueur n'a plus de cartes
-            if(len(service.get_cards(next_team)) == 0 ):
+            if(len(service.get_cards(next_team[0])) == 0 ):
                 return RedirectResponse(url="/game/tirage_carte")
             
             # Le joueur est une IA
-            elif(service.get_player_type(next_team) == "IA"):
+            elif(service.get_player_type(next_team[0]) == "IA"):
                 return RedirectResponse(url="/game/IA_choice")
             
             # Le joueur est humain
@@ -79,7 +102,7 @@ def tirage_carte(request: Request):
     
     # Ajout aux cartes du joueur
     for card in cards:
-        service.push_card(current_team, card)
+        service.push_card(current_team[0], card)
         
     return templates.TemplateResponse(
         "card_draw_phase.html",
@@ -91,7 +114,7 @@ def human_choice(request: Request):
     
     current_team = service.get_current_team()
     players = service.get_all_players_in_order()
-    cards = service.get_cards(current_team)
+    cards = service.get_cards(current_team[0])
     
     return templates.TemplateResponse(
         "Human_game_phase.html",
@@ -103,7 +126,7 @@ def IA_choice(request: Request):
     
     current_team = service.get_current_team()
     players = service.get_all_players_in_order()
-    cards = service.get_cards(current_team)
+    cards = service.get_cards(current_team[0])
     
     return templates.TemplateResponse(
         "IA_game_phase.html",
@@ -123,19 +146,10 @@ def game_result(request: Request):
 @router.post("/Human_choice")
 async def submit_human_choice(request: Request, card: str = Form(...), case: str = Form(...)):
     
-    card = int(card)
-    case = int(case)
-    
-    print(card)
-    print(case)
-    
     current_team = service.get_current_team()
     
-    print(service.get_pos(current_team,3))
-    
-    service.modify_pos(current_team, 3, [card, case])
-    
-    print(service.get_pos(current_team,3))
+    service.modify_pos(current_team[0], current_team[1], [int(card), int(case)])
+    service.pop_card(current_team[0], int(card))
     
     return 1
 
