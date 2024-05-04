@@ -13,7 +13,10 @@ def modify_pos(Team: str, ID: int, New_pos: Tuple[int, int]) -> Player:
     """
     Modify the position of a player
     """
-    database["players"][Team][ID]["position"] = New_pos
+    old_pos = database["players"][Team][ID]["position"][0]
+    database["players"][Team][ID]["position"][0] = New_pos[0] + old_pos
+    database["players"][Team][ID]["position"][1] = New_pos[1]
+    
     return database["players"][Team][ID]
     
 def get_ranking(Team: str, ID: int) -> int:

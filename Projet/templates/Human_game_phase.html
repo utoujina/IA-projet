@@ -3,41 +3,12 @@
 {% from "macro.html" import display_cards %}
 
 {% block style_sup %}
-<style>
-    #button_suivant {
-        margin-top: 5px;
-    }
-    
-    .card {
-        display: inline-block;
-        transform: translate(150%, -75%);
-        width: 100px;
-        height: 125px;
-        background-color: #fff;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        padding: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        z-index: 999;
-    }
-    
-    .case {
-        transform: translate(-110%, -700%);
-        width: 100px;
-        height: 80px;
-        margin-bottom: 5px;
-        background-color: #fff;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        padding: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        z-index: 999;
-    }
-</style>
+<link rel="stylesheet" href="/static/style/human_game.css">
 {% endblock %}
 
 {% block content_sup %}
-<a href="/game" class="btn btn-secondary" id="button_suivant">Suivant</a>
+<button id="button_submit" class="btn btn-secondary" onclick="submit_player_choice()">Appliquer</button>
+<button id="button_suivant" class="btn btn-secondary" onclick="window.location.href='/game'">Suivant</button>
 
 <div class="cards">
     {% for card in cards %}
@@ -47,21 +18,18 @@
 
 <div class="cases">
     <div class="case">
-        <div class="value" id="gauche">Case de gauche</div>
+        <div class="value" id="gauche" value="0">Case de gauche</div>
     </div>
     <div class="case">
-        <div class="value" id="milieu">Case du milieu</div>
+        <div class="value" id="milieu" value="1">Case du milieu</div>
     </div>
     <div class="case">
-        <div class="value" id="droite">Case de droite</div>
+        <div class="value" id="droite" value="2">Case de droite</div>
     </div>
 </div>
 
 {% endblock %}
 
 {% block scripts_sup %}
-<script>
-    displayMessage("TBot : Sélectionnez la carte secondes à utiliser pour le joueur XX de votre équipe et la case sur laquelle il va se positionner.");
-    displayMessage("TBot : Appuyez sur suivant pour continuer.");
-</script>
+<script src="../static/js/human_game.js"></script>
 {% endblock %}
