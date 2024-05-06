@@ -269,5 +269,5 @@ def query_creation(name_of_query: str) -> str:
     players_str += "]"
     
     # Construction de la requête Prolog
-    query = "{}([{},{}], {}, {},[X, Y]).".format(name_of_query, current_team[0], current_team[1], cards, players_str)
+    query = "{}([{},{}], {}, {},[X, Y, C]).".format(name_of_query, current_team[0], current_team[1], cards, players_str)
     return query
