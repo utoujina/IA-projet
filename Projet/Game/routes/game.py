@@ -115,10 +115,11 @@ def human_choice(request: Request):
     current_team = service.get_current_team()
     players = service.get_all_players_in_order()
     cards = service.get_cards(current_team[0])
+    pos = service.get_pos(current_team[0], current_team[1])
     
     return templates.TemplateResponse(
         "Human_game_phase.html",
-        context={'request': request, 'players': players, 'current_team': current_team, 'cards': cards}
+        context={'request': request, 'players': players, 'current_team': current_team, 'cards': cards, 'pos': pos}
     )
 
 @router.get("/game/IA_choice")

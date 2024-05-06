@@ -7,7 +7,7 @@ def get_pos(Team: str, ID: int) -> Tuple[int, int]:
     """
     Return the position of a player
     """
-    return database["players"][Team][ID]
+    return database["players"][Team][ID]["position"]
 
 def modify_pos(Team: str, ID: int, New_pos: Tuple[int, int]) -> Player:
     """
@@ -249,7 +249,7 @@ def change_running_order_classement_phase():
 
 def query_creation(name_of_query: str) -> str:
     """
-    Function creating a prolog query
+    Function that creates the Prolog query.
     
     Notes
     -----
@@ -271,3 +271,47 @@ def query_creation(name_of_query: str) -> str:
     # Construction de la requête Prolog
     query = '{}(["{}",{}], {}, {},[X, C]).'.format(name_of_query, current_team[0], current_team[1], cards, players_str)
     return query
+
+def get_available_case(case: int, card: int) -> list[int]:
+    """
+    Function that gives the available case according 
+    to the current box and the number of seconds to apply.
+    """
+    box_to_reach = case[0] + card
+    
+    if (card == 1):
+        if(case[1] == 0):
+            return [0, 1]
+        elif(case[1] == 2):
+            return [1, 2]
+        else:
+            return [0, 1, 2]
+    else:
+        if(box_to_reach > 0 and box_to_reach < 11):
+            return [0, 1, 2]
+        elif(box_to_reach > 10 and box_to_reach < 19):
+            return [0, 2]
+        elif(box_to_reach > 18 and box_to_reach < 22):
+            return [0, 1, 2]
+        elif(box_to_reach > 21 and box_to_reach < 36):
+            if(case[0] < 22):
+                return [0, 1, 2]
+            else:
+                if(case[1] == 2):
+                    return [2]
+                else:
+                    return [0, 1]
+        elif(box_to_reach > 35 and box_to_reach < 73):
+            return [0, 2]
+        elif(box_to_reach > 72 and box_to_reach < 76):
+            return [0]
+        elif(box_to_reach > 75 and box_to_reach < 85):
+            return [0, 2]
+        elif(box_to_reach > 84 and box_to_reach < 95):
+            if(case[0] < 84):
+                return [0, 2]
+            else:
+                return [case[1]]
+        elif(box_to_reach > 94 and box_to_reach < 106):
+            return [0, 1, 2]
+        else: []

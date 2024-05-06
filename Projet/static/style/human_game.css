@@ -44,3 +44,8 @@
 .card:hover, .case:hover {
     border-color: blue;
 }
+
+.unactionable {
+    background-color: #b5b4a5;
+    pointer-events: none;
+}
