@@ -127,10 +127,13 @@ def IA_choice(request: Request):
     current_team = service.get_current_team()
     players = service.get_all_players_in_order()
     cards = service.get_cards(current_team[0])
+    query = service.query_creation("IA1")
+    
+    print(query)
     
     return templates.TemplateResponse(
         "IA_game_phase.html",
-        context={'request': request, 'players': players, 'current_team': current_team, 'cards': cards}
+        context={'request': request, 'players': players, 'current_team': current_team, 'cards': cards, 'query': query}
     )
 
 @router.get("/game/result")

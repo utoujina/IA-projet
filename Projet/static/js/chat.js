@@ -1,6 +1,8 @@
 const session = pl.create();
 
-session.consult("./static/prolog/tbot.pl");
+var rootUrl = window.location.origin;
+var prologUrl = rootUrl + "/static/prolog/tbot.pl"; 
+session.consult(prologUrl);
 
 function askQuestion(question) {
     

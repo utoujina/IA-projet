@@ -246,3 +246,28 @@ def change_running_order_classement_phase():
     
     database["running_order"] = new_running_order
     return database["running_order"]
+
+def query_creation(name_of_query: str) -> str:
+    """
+    Function creating a prolog query
+    
+    Notes
+    -----
+    
+    """
+    current_team = database["current_team"]
+    players = get_all_players_in_order()
+    cards = get_cards(current_team[0])
+    
+    players_str = "["
+    for player in players:
+        team = player.ID[:3]
+        id = player.ID[4:]
+        x, y = player.position
+        players_str += f"[{team}, {id}, {x}, {y}], "
+    players_str = players_str.rstrip(', ') 
+    players_str += "]"
+    
+    # Construction de la requête Prolog
+    query = "{}([{},{}], {}, {},[X, Y]).".format(name_of_query, current_team[0], current_team[1], cards, players_str)
+    return query
