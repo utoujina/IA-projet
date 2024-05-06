@@ -3,39 +3,11 @@
 {% from "macro.html" import display_cards %}
 
 {% block style_sup %}
-<style>
-    #button_suivant {
-        margin-top: 5px;
-        pointer-events: none;
-        opacity: 50%;
-    }
-    
-    #button_submit {
-        pointer-events: auto;
-        opacity: 100%;
-    }
-    
-    .card {
-        display: inline-block;
-        transform: translate(200%, -75%);
-        width: 100px;
-        height: 125px;
-        background-color: #fff;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        padding: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        z-index: 999;
-    }
-    
-    .selected {
-        background-color: lightblue; 
-    }
-</style>
+<link rel="stylesheet" href="/static/style/ia_game.css">
 {% endblock %}
 
 {% block content_sup %}
-<button id="button_submit" class="btn btn-secondary" onclick="move_IA()">Générer</button>
+<button type="submit" id="button_submit" class="btn btn-secondary">Générer</button>
 <button id="button_suivant" class="btn btn-secondary" onclick="window.location.href='/game'">Suivant</button>
 
 <div class="cards">
@@ -47,44 +19,10 @@
 {% endblock %}
 
 {% block scripts_sup %}
-<script src="../static/js/IA1.js"></script>
 <script>    
-    console.log("{{query}}");
-    
+    var pl_query = "{{ query }}";
     displayMessage("TBot : C'est à l'IA de jouer, elle va déplacer le joueur {{current_team[1]}} de l'équipe {{current_team[0]}}.");
     displayMessage("TBot : Appuiez sur \"Générer\" afin de qu'elle nous donne sa réponse.");
-    
-    function select_card(IA_choice){
-        var attribu = '.value[value="' + IA_choice + '"]';
-        var card_selected = document.querySelector(attribu);
-        if (card_selected) {
-            card_selected.parentElement.classList.toggle('selected');
-        } else {
-            console.log("Aucune carte avec la valeur " + IA_choice + " n'a été trouvée.");
-        }
-    }
-    
-    function move_IA(){
-        pl_query = "nb_coureurs(X).";
-        session.query(pl_query);
-        console.log(pl_query);
-        
-        session.answer(x => {
-            console.log(x);
-            var IA_answer = x.links.X;
-            console.log(IA_answer);
-            
-            displayMessage("TBot : Voici le choix éffectué par l'IA : " + IA_answer);
-            select_card(IA_answer);
-        });
-        
-        // Mettre à jour les boutons
-        button_suivant.style.pointerEvents = 'auto';
-        button_submit.style.pointerEvents = 'none';
-        button_suivant.style.opacity = "1";
-        button_submit.style.opacity = "0.5";
-        
-    }
-    
 </script>
+<script src="../static/js/ia_game.js"></script>
 {% endblock %}

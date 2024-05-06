@@ -127,9 +127,7 @@ def IA_choice(request: Request):
     current_team = service.get_current_team()
     players = service.get_all_players_in_order()
     cards = service.get_cards(current_team[0])
-    query = service.query_creation("IA1")
-    
-    print(query)
+    query = service.query_creation("ia1")
     
     return templates.TemplateResponse(
         "IA_game_phase.html",
@@ -158,6 +156,11 @@ async def submit_human_choice(request: Request, card: str = Form(...), case: str
 
 
 @router.post("/IA_choice")
-async def submit_IA_choice(request: Request):
+async def submit_IA_choice(request: Request, card: str = Form(...), case: str = Form(...)):
     
-    return RedirectResponse(url="/game", status_code=303)
+    current_team = service.get_current_team()
+    
+    service.modify_pos(current_team[0], current_team[1], [int(card), int(case)])
+    service.pop_card(current_team[0], int(card))
+    
+    return 1

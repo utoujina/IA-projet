@@ -103,3 +103,5 @@ lower_string([String|Strings], [LString|LStrings]):-
 tour2france(L_Mots, ReponseString) :-
    lower_string(L_Mots, L_Mots_Lower),
    produire_reponse(L_Mots_Lower,ReponseString).
+
+    

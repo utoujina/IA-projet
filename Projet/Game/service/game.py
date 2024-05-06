@@ -264,10 +264,10 @@ def query_creation(name_of_query: str) -> str:
         team = player.ID[:3]
         id = player.ID[4:]
         x, y = player.position
-        players_str += f"[{team}, {id}, {x}, {y}], "
+        players_str += f'["{team}", {id}, {x}, {y}], '
     players_str = players_str.rstrip(', ') 
     players_str += "]"
     
     # Construction de la requête Prolog
-    query = "{}([{},{}], {}, {},[X, Y, C]).".format(name_of_query, current_team[0], current_team[1], cards, players_str)
+    query = '{}(["{}",{}], {}, {},[X, C]).'.format(name_of_query, current_team[0], current_team[1], cards, players_str)
     return query
