@@ -9,6 +9,7 @@ templates = Jinja2Templates(directory="templates")
 
 @router.get('/')
 def display_setup_phase(request: Request):
+        
     return templates.TemplateResponse(
         "setup_phase.html",
         context={'request': request}
@@ -34,15 +35,16 @@ async def submit_choices_setup(request: Request, BEL: str = Form(...), ITA: str 
 @router.get("/game")
 def game(request: Request):
     
+    service.update_ranking()
     new_counter = service.modify_counter(service.get_counter() + 1)
     print("Counter : " + str(new_counter))
-
+    
     if(new_counter < 4):
         # Phase 1 : On tire les cartes pour les 4 équipes
         # On passe à l'équipe suivante
         ordre = ["ITA", "NLD", "BEL", "DEU"]
         next_team = ordre[new_counter % 4]
-        service.modify_current_team(next_team)
+        service.modify_current_team(next_team, 0)
         
         return RedirectResponse(url="/game/tirage_carte")
     
@@ -57,29 +59,39 @@ def game(request: Request):
                 service.change_running_order_placement_phase()
                 print("MAJ BEST")
             
-            # Définiiotn de l'ordre des joueurs pour la phase qui se base sur le classement
-            # Donc on passe par là tous les 12 tours pour mettre à jour le classement
+            # On passe par ici tous les 12 tours
             if(new_counter > 15 and (new_counter-4)%12 == 0):
-                # (new_counter-4) % 16 == 0
-                service.change_running_order_classement_phase()
-                print("MAJ CLASSEMENT")
+                    
+                    # Mise à jour de l'ordre des joueurs en fonction du classement
+                    service.change_running_order_classement_phase()
+                    print("MAJ CLASSEMENT")
                 
             # On récupère l'odre de jeu
             ordre = service.get_running_order()
-            
+
             # Changement du prochain joueur
             next_tour = ordre[(new_counter-4) % 12]
-            service.modify_current_team(next_tour[:3])
-            service.modify_current_player(int(next_tour[4:]))
-            
-            next_team = service.get_current_team()
+            team = [next_tour[:3], int(next_tour[4:])]
+            service.modify_current_team(team[0], team[1])
             
             # Le joueur n'a plus de cartes
-            if(len(service.get_cards(next_team[0])) == 0 ):
+            if(len(service.get_cards(team[0])) == 0 ):
                 return RedirectResponse(url="/game/tirage_carte")
             
+            # Le joueur passe son tour
+            if(service.get_pos(team[0], team[1])[1] == -1):
+                return RedirectResponse(url="/game/passe_tour")
+            
+            # Le joueur est tombé
+            if(service.get_pos(team[0], team[1])[1] == -2):
+                service.modify_pos(team[0], team[1], [service.get_pos(team[0], team[1])[0], -1])
+                return RedirectResponse(url="/game/chute")
+            
+            if(service.is_chance_case(service.get_pos(team[0], team[1]))):
+                return RedirectResponse(url="/game/chance")
+            
             # Le joueur est une IA
-            elif(service.get_player_type(next_team[0]) == "IA"):
+            elif(service.get_player_type(team[0]) == "IA"):
                 return RedirectResponse(url="/game/IA_choice")
             
             # Le joueur est humain
@@ -130,6 +142,8 @@ def IA_choice(request: Request):
     cards = service.get_cards(current_team[0])
     query = service.query_creation("ia1")
     
+    print(query)
+    
     return templates.TemplateResponse(
         "IA_game_phase.html",
         context={'request': request, 'players': players, 'current_team': current_team, 'cards': cards, 'query': query}
@@ -145,23 +159,76 @@ def game_result(request: Request):
         context={'request': request, 'players': players}
     )
 
-@router.post("/Human_choice")
-async def submit_human_choice(request: Request, card: str = Form(...), case: str = Form(...)):
+
+@router.post("/Choice")
+async def submit_choice(request: Request, card: str = Form(...), case: str = Form(...)):
     
     current_team = service.get_current_team()
+    position = service.get_pos(current_team[0], current_team[1])
     
+    chute = service.check_chute(position, int(case), int(card))
+    service.pop_card(current_team[0], int(card))
     service.modify_pos(current_team[0], current_team[1], [int(card), int(case)])
+    
+    if(chute != -1):
+        service.apply_chute(chute, current_team)
+        
+    return 1
+
+@router.get("/game/chute")
+def chute(request: Request):
+    
+    current_team = service.get_current_team()
+    players = service.get_all_players_in_order()
+    cards = service.get_cards(current_team[0])
+    
+    return templates.TemplateResponse(
+        "chute.html",
+        context={'request': request, 'players': players, 'current_team': current_team, 'cards': cards}
+    )
+
+@router.post("/Chute")
+async def submit_chute_choice(request: Request, card: str = Form(...)):
+    
+    current_team = service.get_current_team()
     service.pop_card(current_team[0], int(card))
     
     return 1
 
+@router.get("/game/passe_tour")
+def passe_tour(request: Request):
+    current_team = service.get_current_team()
+    players = service.get_all_players_in_order()
+    cards = service.get_cards(current_team[0])
+    
+    return templates.TemplateResponse(
+        "passe_tour.html",
+        context={'request': request, 'players': players, 'current_team': current_team, 'cards': cards}
+    )
 
-@router.post("/IA_choice")
-async def submit_IA_choice(request: Request, card: str = Form(...), case: str = Form(...)):
+@router.get("/game/chance")
+def case_chance(request: Request):
+    current_team = service.get_current_team()
+    players = service.get_all_players_in_order()
+    cards = service.get_cards(current_team[0])
+    print(cards)
+    
+    return templates.TemplateResponse(
+        "chance.html",
+        context={'request': request, 'players': players, 'current_team': current_team, 'cards': cards}
+    )
+
+@router.post("/Chance")
+async def apply_chance(request: Request, chance_card: int = Form(...), case: int = Form(...)):
     
     current_team = service.get_current_team()
+    print(current_team)
+    position = service.get_pos(current_team[0], current_team[1])
     
-    service.modify_pos(current_team[0], current_team[1], [int(card), int(case)])
-    service.pop_card(current_team[0], int(card))
+    chute = service.check_chute(position, int(case), int(chance_card))
+    service.modify_pos(current_team[0], current_team[1], [int(chance_card), int(case)])
     
+    if(chute != -1):
+        service.apply_chute(chute, current_team)
+        
     return 1

@@ -1,15 +1,15 @@
 from typing import Tuple
-from Game.schemas.player import Player, Card, Type, Team, Players, Counter
+from Game.schemas.player import Player, Card, Type, Team, Players, Counter, Case, Chute
 from Game.database import database
 import random
 
-def get_pos(Team: str, ID: int) -> Tuple[int, int]:
+def get_pos(Team: str, ID: int) -> Case:
     """
     Return the position of a player
     """
     return database["players"][Team][ID]["position"]
 
-def modify_pos(Team: str, ID: int, New_pos: Tuple[int, int]) -> Player:
+def modify_pos(Team: str, ID: int, New_pos: Case) -> Player:
     """
     Modify the position of a player
     """
@@ -17,6 +17,13 @@ def modify_pos(Team: str, ID: int, New_pos: Tuple[int, int]) -> Player:
     database["players"][Team][ID]["position"][0] = New_pos[0] + old_pos
     database["players"][Team][ID]["position"][1] = New_pos[1]
     
+    return database["players"][Team][ID]
+
+def modify_couloir(Team: str, ID: int, new_couloir : int) -> Player:
+    """
+    Modify the couloir of a player
+    """
+    database["players"][Team][ID]["position"][1] = new_couloir
     return database["players"][Team][ID]
     
 def get_ranking(Team: str, ID: int) -> int:
@@ -74,7 +81,7 @@ def modify_player_type(Team: str, New_type: str) -> Type:
     database["type"][Team] = New_type
     return database["type"][Team]
 
-def get_current_team() -> Team:
+def get_current_team() -> list[Team, int]:
     """
     Get the current player
     
@@ -84,7 +91,7 @@ def get_current_team() -> Team:
     """
     return database["current_team"]
 
-def modify_current_team(New_team: Team) -> Team:
+def modify_current_team(new_team: Team, id_player: int) -> Team:
     """
     Modify the team that is currently playing 
     
@@ -92,18 +99,7 @@ def modify_current_team(New_team: Team) -> Team:
     -----
     It is either BEL, DEU, NLD or ITA.
     """
-    database["current_team"][0] = New_team
-    return database["current_team"]
-
-def modify_current_player(New_player: int) -> Team:
-    """
-    Modify the player that is currently playing 
-    
-    Notes
-    -----
-    It is either 1, 2 or 3.
-    """
-    database["current_team"][1] = New_player
+    database["current_team"] = [new_team, id_player]
     return database["current_team"]
 
 def get_counter() -> Counter:
@@ -121,9 +117,16 @@ def modify_counter(New_counter: Counter) -> Counter:
 
 def is_game_over() -> bool:
     """
-    Variable saying whether the game is over or not 
+    Function saying whether the game is over or not
+    
+    Notes
+    -----
+    The game is over if there is no more card in the main deck
     """
-    return database["game_over"]
+    if (len(database["cards"]["Pack"]) == 0):
+        return True
+    else:
+        return False
 
 def set_game_over() -> bool:
     """
@@ -272,46 +275,118 @@ def query_creation(name_of_query: str) -> str:
     query = '{}(["{}",{}], {}, {},[X, C]).'.format(name_of_query, current_team[0], current_team[1], cards, players_str)
     return query
 
-def get_available_case(case: int, card: int) -> list[int]:
+def update_ranking():
     """
-    Function that gives the available case according 
-    to the current box and the number of seconds to apply.
+    Update the ranking thanks to the players position
     """
-    box_to_reach = case[0] + card
     
-    if (card == 1):
-        if(case[1] == 0):
-            return [0, 1]
-        elif(case[1] == 2):
-            return [1, 2]
-        else:
-            return [0, 1, 2]
+    all_players = []
+
+    for team in database['players']:
+        for player_id, player_info in database['players'][team].items():
+            all_players.append(player_info)
+
+    # Trier les joueurs en fonction de la coordonnée de leur case (position[0])
+    sorted_players = sorted(all_players, key=lambda x: x['position'][0], reverse=True)
+
+    # Mettre à jour le classement des joueurs dans la base de données
+    for i, player in enumerate(sorted_players, 1):
+        database["players"][player['ID'][:3]][int(player['ID'][4:])]['ranking'] = i
+
+    return 1
+
+def is_occupied(case: Case) -> bool:
+    """
+    Return true if a case is arleady occupied, false otherise
+    """
+    for team in database['players']:
+        
+        for id in database['players'][team]:
+
+            if (database['players'][team][id]['position'] == case):
+                return True
+    return False
+
+def couloir_is_occupied(num_case: int) -> bool:
+    """
+    Return true if all the couloir is occupied
+    """
+    if(is_occupied([num_case, 0]) and is_occupied([num_case, 1]) and is_occupied([num_case, 2])):
+        return True
     else:
-        if(box_to_reach > 0 and box_to_reach < 11):
-            return [0, 1, 2]
-        elif(box_to_reach > 10 and box_to_reach < 19):
-            return [0, 2]
-        elif(box_to_reach > 18 and box_to_reach < 22):
-            return [0, 1, 2]
-        elif(box_to_reach > 21 and box_to_reach < 36):
-            if(case[0] < 22):
-                return [0, 1, 2]
-            else:
-                if(case[1] == 2):
-                    return [2]
-                else:
-                    return [0, 1]
-        elif(box_to_reach > 35 and box_to_reach < 73):
-            return [0, 2]
-        elif(box_to_reach > 72 and box_to_reach < 76):
-            return [0]
-        elif(box_to_reach > 75 and box_to_reach < 85):
-            return [0, 2]
-        elif(box_to_reach > 84 and box_to_reach < 95):
-            if(case[0] < 84):
-                return [0, 2]
-            else:
-                return [case[1]]
-        elif(box_to_reach > 94 and box_to_reach < 106):
-            return [0, 1, 2]
-        else: []
+        return False
+    
+def is_chance_case(case: Case) -> bool:
+    """
+    Return true if it is a chance case, false otherwise
+    """
+    chance_cases = [[9, 0], [10,0], [11,0], [12,0], [15,2], [16,2], [19,2], [21,2], [24,0], [26,0], [28,0], [30,0], [32,0], [34,0], [48,0], [57,2], [66,0], [66,2], [74,0]]
+    return list(case) in chance_cases
+
+def get_chance() -> int:
+    return random.randint(-3, 3)
+
+def check_chute(current_case: Case, new_couloir: int, card: Card) -> int:
+    """
+    Return the value of the case if there is a chute, -1 otherwise
+    """
+    new_case = [current_case[0] + card, new_couloir]
+    
+    if (is_occupied(new_case)):
+        return new_case[0]
+    
+    else:
+        for i in range(current_case[0] - card, new_case[0]):
+            if (couloir_is_occupied(i)):
+                return i
+    return -1
+
+def apply_chute(nb_case: int, player: list[Team, int]):
+    """
+    Apply a chute
+    """
+    players = get_all_players_in_order()
+    for player in players:
+        
+        if player.position[0] == nb_case:
+            print("OKOKOKOK")
+            modify_couloir(player.ID[:3], int(player.ID[4:]), -2)
+            
+
+def get_chute() -> Chute:
+    """
+    Returning the variable chute
+    """
+    return database["chute"]
+
+def modify_chute(new_chute: Chute) -> Chute:
+    """
+    Modifyign the variable chute
+    """
+    database["chute"] = new_chute
+    return database["chute"]
+
+def change_running_order_chute_phase(num_case: int):
+    order = get_all_players_in_order()
+    new_running_order = []
+    
+    for player in order:
+        if(player.position[0] != num_case):
+            new_running_order.append([player.ID, -1])
+        else:
+            new_running_order.append([player.ID, 1])
+            
+    database["running_order"] = new_running_order
+    return database["running_order"]
+
+def remove_all_chute_running_order():
+    order = get_all_players_in_order()
+    new_running_order = []
+    
+    for player in order:
+        new_running_order.append([player.ID, 1])
+            
+    database["running_order"] = new_running_order
+    return database["running_order"]
+    
+            

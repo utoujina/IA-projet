@@ -3,7 +3,27 @@
 <tr>
     <td>{{ player.ranking }} :</td>
     <td>{{ player.ID }}</td>
-    <td>{{ player.position }}</td>
+    <td>{{ player.position[0] }}</td>
+    
+    {% if player.position[1] == 0 %}
+    <td>Gauche</td>
+    
+    {% elif player.position[1] == 1 %}
+    <td>Milieu</td>
+    
+    {% elif player.position[1] == 2 %}
+    <td>Droite</td>
+    
+    {% elif player.position[1] == -1 %}
+    <td>Bas-coté</td>
+    
+    {% elif player.position[1] == -2 %}
+    <td>En chute</td>
+    
+    {% else %}
+    <td>Problème</td>
+    
+    {% endif %}
 </tr>
 {% endmacro %}
 

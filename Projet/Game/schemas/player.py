@@ -1,6 +1,20 @@
 from typing import Literal, Tuple, Dict
 from pydantic import BaseModel, Field
 
+class Case(BaseModel):
+    """
+    A class representing a case
+    
+    Notes
+    -----
+    [number_of_the_case, couloir] where couloir is 0, 1 or 2
+    0 = gauche
+    1 = milieu
+    2 = droite
+    -1 = sur le coté
+    """
+    case: Tuple[int, int]
+
 class Player(BaseModel):
     """
     A class representing a player.
@@ -17,13 +31,14 @@ class Player(BaseModel):
     """
     ID: str
     ranking: int = Field(ge=1, le=12)
-    position: Tuple[int, int]
+    position: tuple[int, int]
 
 class Players(BaseModel):
     """
     A class representing all the players in the game
     """
     players: Dict[str, Dict[int, Player]]
+
 
 class Card(BaseModel):
     """
@@ -81,3 +96,14 @@ class Running_order(BaseModel):
     It can be determined by the best second card owned or by the ranking of players.
     """
     running_order: list[str]
+    
+class Chute(BaseModel):
+    """
+    A class reprenting the fact that there is a chute 
+    
+    Notes
+    -----
+    chute[0] = is there a chute
+    chute[1] = case of the chute
+    """
+    chute: Tuple[bool, int]

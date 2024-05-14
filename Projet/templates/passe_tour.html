@@ -1,0 +1,37 @@
+{%extends "game_template.html" %}
+
+{% from "macro.html" import display_cards %}
+
+{% block style_sup %}
+<style>
+    .card {
+        display: inline-block;
+        transform: translate(200%, -75%);
+        width: 100px;
+        height: 125px;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        z-index: 999;
+    }
+</style>
+{% endblock %}
+
+{% block content_sup %}
+<button id="button_suivant" class="btn btn-secondary" onclick="window.location.href='/game'">Suivant</button>
+
+<div class="cards">
+    {% for card in cards %}
+    {{ display_cards(card) }}
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block scripts_sup %}
+<script>
+    displayMessage("TBot : Le joueur {{current_team[1]}} de l'équipe {{current_team[0]}} est tombé au tour précédent, il passe donc son tour.");
+    displayMessage("TBot : Appuyez sur suivant pour continuer.");
+</script>
+{% endblock %}

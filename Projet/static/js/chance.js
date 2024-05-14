@@ -1,6 +1,5 @@
-const cards = document.querySelectorAll('.card');
 const cases = document.querySelectorAll('.case');
-
+let chance_number = 0;
 
 // Déséllectionne les élément sauf celui en paramètre
 function deselectExcept(selectedElement, elements) {
@@ -11,15 +10,6 @@ function deselectExcept(selectedElement, elements) {
     });
 }
 
-// Event pour les cartes
-cards.forEach(card => {
-    card.addEventListener('click', () => {
-        deselectExcept(card, cards);
-        card.classList.toggle('selected');
-        indisponnible_case();
-    });
-});
-
 // Event pour les cases
 cases.forEach(caseElement => {
     caseElement.addEventListener('click', () => {
@@ -27,6 +17,86 @@ cases.forEach(caseElement => {
         caseElement.classList.toggle('selected');
         
     });
+});
+
+// fonction d'envoie des données
+document.getElementById("button_appliquer").addEventListener("click", function(event){
+    event.preventDefault();
+    
+    const case_selected = document.querySelector('.case.selected');
+    
+    if(case_selected){
+        var case_value = case_selected.querySelector('.value').getAttribute('value');
+        
+        // Envoyer le résultat
+        var formData = new FormData();
+        formData.append('chance_card', chance_number);
+        formData.append('case', case_value);
+        
+        fetch('/Chance', {
+            method: 'POST',
+            body: formData
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log(data);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+        
+        // Mettre à jour les boutons
+        var button_suivant = document.getElementById('button_suivant');
+        var button_appliquer = document.getElementById('button_appliquer');
+        
+        button_suivant.style.pointerEvents = 'auto';
+        button_appliquer.style.pointerEvents = 'none';
+        button_suivant.style.opacity = "1";
+        button_appliquer.style.opacity = "0.5";
+        
+        case_chosen = null;
+        if (case_value == 0) {
+            case_chosen = "gauche";
+        }
+        if (case_value == 1){
+            case_chosen = "milieu";
+        }
+        if(case_value == 2){
+            case_chosen = "droite";
+        }
+        
+        displayMessage("TBot : Vous avez choisit de déplacer votre joueur sur la case de " + case_chosen +".");
+        displayMessage("TBot : Appuyez sur suivant pour continuer.");   
+    }
+    else{
+        alert("Veuillez sélectionner une case.");
+    }
+    
+});
+
+document.getElementById("button_générer").addEventListener("click", function(event){
+    event.preventDefault();
+    
+    const ensemble = [-3, -2, -1, 1, 2, 3];
+    const indice = Math.floor(Math.random() * ensemble.length);
+    chance_number = ensemble[indice];
+    console.log(chance_number);
+    
+    displayMessage("TBot : Votre équipe a tiré la carte chance " + chance_number + " secondes !");
+    displayMessage("TBot : Appuyer sur appliquer lorsque vous aurez choisi le couloir sur lequel placer votre coureur.");
+    
+    // Mettre à jour les boutons
+    var button_générer = document.getElementById('button_générer');
+    var button_appliquer = document.getElementById('button_appliquer');
+    
+    button_appliquer.style.pointerEvents = 'auto';
+    button_générer.style.pointerEvents = 'none';
+    button_appliquer.style.opacity = "1";
+    button_générer.style.opacity = "0.5";
+    
+    cases.forEach(caseElement => {
+        caseElement.classList.remove('unactionable');
+    })    
 });
 
 // envent pour couloir indisponnible
@@ -52,62 +122,6 @@ function indisponnible_case() {
                 caseElement.classList.remove('unactionable');
             }
         });
-    }
-}
-
-// Fonction du bouton d'envoie
-function submit_player_choice() {
-    const card_selected = document.querySelector('.card.selected');
-    const case_selected = document.querySelector('.case.selected');
-    
-    var button_suivant = document.getElementById('button_suivant');
-    var button_submit = document.getElementById('button_submit');
-
-    // Vérifier si une carte et une case sont sélectionnées
-    if (card_selected && case_selected) {
-        
-        var card_value = card_selected.querySelector('.value').getAttribute('value');
-        var case_value = case_selected.querySelector('.value').getAttribute('value');
-        
-        // Envoyer les éléments sélectionnés au backend via une requête Fetch
-        var formData = new FormData();
-        formData.append('card', card_value);
-        formData.append('case', case_value);
-        
-        fetch('/Choice', {
-            method: 'POST',
-            body: formData
-        })
-        .then((response) => response.json())
-        .then((data) => {
-            console.log(data);
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-        
-        // Mettre à jour les boutons
-        button_suivant.style.pointerEvents = 'auto';
-        button_submit.style.pointerEvents = 'none';
-        button_suivant.style.opacity = "1";
-        button_submit.style.opacity = "0.5";
-        
-        case_chosen = null;
-        if (case_value == 0) {
-            case_chosen = "gauche";
-        }
-        if (case_value == 1){
-            case_chosen = "milieu";
-        }
-        if(case_value == 2){
-            case_chosen = "droite";
-        }
-        
-        displayMessage("TBot : Vous avez choisit de déplacer votre joueur de " + card_value + " secondes et de le placer sur la case " + case_chosen +" .");
-        displayMessage("TBot : Appuyez sur suivant pour continuer.");
-    }
-    else{
-        alert("Veuillez sélectionner une carte et une case.");
     }
 }
 

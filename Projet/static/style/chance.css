@@ -1,0 +1,55 @@
+.case {
+    transform: translate(-110%, -700%);
+    width: 100px;
+    height: 80px;
+    margin-bottom: 5px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+    cursor: pointer;
+}
+
+.card {
+    display: inline-block;
+    transform: translate(300%, -75%);
+    width: 100px;
+    height: 125px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+}
+
+#button_suivant {
+    margin-top: 5px;
+    pointer-events: none;
+    opacity: 50%;
+}
+
+#button_appliquer{
+    pointer-events: none;
+    opacity: 50%;
+}
+
+#button_générer{
+    pointer-events: auto;
+    opacity: 100%;
+}
+
+.selected {
+    background-color: lightblue; 
+}
+
+.case:hover {
+    border-color: blue;
+}
+
+.unactionable {
+    background-color: #b5b4a5;
+    pointer-events: none;
+}

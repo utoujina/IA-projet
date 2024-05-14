@@ -43,6 +43,7 @@ document.getElementById("button_submit").addEventListener("click", function(even
         }
         
         displayMessage("TBot : L'IA a avancé son joueur de " + IA_card + " secondes et l'a placé dans la case de " + case_chosen + ".");
+        displayMessage("TBot : Appuyez sur suivant pour continuer.");
         select_card(IA_card);
         
         // Envoyer le résultat
@@ -50,7 +51,7 @@ document.getElementById("button_submit").addEventListener("click", function(even
         formData.append('card', IA_card);
         formData.append('case', IA_case);
         
-        fetch('/Human_choice', {
+        fetch('/Choice', {
             method: 'POST',
             body: formData
         })

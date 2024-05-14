@@ -3,7 +3,7 @@ database = {
     
     "counter": -1,
     
-    "game_over": False,
+    "chute": [False, -1],
     
     "players":{
         "BEL":{
