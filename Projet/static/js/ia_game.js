@@ -16,16 +16,11 @@ function select_card(IA_choice){
 document.getElementById("button_submit").addEventListener("click", function(event){
     event.preventDefault();
     
-    console.log(pl_query);
-    
     var decodedQuery = document.createElement("textarea");
     decodedQuery.innerHTML = pl_query;
     var queryWithQuotes = decodedQuery.value;
-
-    console.log(queryWithQuotes);
     
     session2.query(queryWithQuotes);
-    console.log(queryWithQuotes);
     
     session2.answer(x => {
         var IA_case = x.links.C;
@@ -51,7 +46,7 @@ document.getElementById("button_submit").addEventListener("click", function(even
         formData.append('card', IA_card);
         formData.append('case', IA_case);
         
-        fetch('/Choice', {
+        fetch('/choice', {
             method: 'POST',
             body: formData
         })

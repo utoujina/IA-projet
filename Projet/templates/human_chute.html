@@ -8,7 +8,7 @@
 
 {% block content_sup %}
 <button type="submit" id="button_submit" class="btn btn-secondary" onclick="submit_player_choice()">Appliquer</button>
-<button id="button_suivant" class="btn btn-secondary" onclick="window.location.href='/game'">Suivant</button>
+<button id="button_suivant" class="btn btn-secondary" onclick="window.location.href='/intermediate_phase'">Suivant</button>
 
 <div class="cards">
     {% for card in cards %}
@@ -20,7 +20,7 @@
 
 {% block scripts_sup %}
 <script>    
-    displayMessage("TBot : Votre joueur numéro {{current_team[1]}} de l'équipe {{current_team[0]}} a chuté. Vous devez défausser une carte, faites votre choix.");
+    displayMessage("TBot : Votre coureur numéro {{current_team[1]}} de l'équipe {{current_team[0]}} a chuté. Vous devez défausser une carte, faites votre choix.");
     displayMessage("TBot : Appuiez sur \"Suivant\" pour continuer.");
 </script>
 <script src="../static/js/chute.js"></script>

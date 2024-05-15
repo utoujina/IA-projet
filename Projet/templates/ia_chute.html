@@ -3,11 +3,11 @@
 {% from "macro.html" import display_cards %}
 
 {% block style_sup %}
-<link rel="stylesheet" href="/static/style/ia_game.css">
+<link rel="stylesheet" href="/static/style/ia_chute.css">
 {% endblock %}
 
 {% block content_sup %}
-<button type="submit" id="button_submit" class="btn btn-secondary">Générer</button>
+<button id="button_générer" class="btn btn-secondary">Générer</button>
 <button id="button_suivant" class="btn btn-secondary" onclick="window.location.href='/intermediate_phase'">Suivant</button>
 
 <div class="cards">
@@ -19,10 +19,10 @@
 {% endblock %}
 
 {% block scripts_sup %}
-<script>    
+<script>
     var pl_query = "{{ query }}";
-    displayMessage("TBot : C'est à l'IA de jouer, elle va déplacer le coureur {{current_team[1]}} de l'équipe {{current_team[0]}}.");
-    displayMessage("TBot : Appuiez sur \"Générer\" afin de qu'elle nous donne sa réponse.");
+    displayMessage("TBot : Le coureur {{current_team[1]}} de l'équipe {{current_team[0]}} a chuté. Il doit choisir une carte à défausser.");
+    displayMessage("TBot : Appuyez sur générer pour voir quelle carte l'IA va choisir !");
 </script>
-<script src="../static/js/ia_game.js"></script>
+<script src="../static/js/ia_chute.js"></script>
 {% endblock %}

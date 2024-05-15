@@ -74,7 +74,7 @@ function submit_player_choice() {
         formData.append('card', card_value);
         formData.append('case', case_value);
         
-        fetch('/Choice', {
+        fetch('/choice', {
             method: 'POST',
             body: formData
         })

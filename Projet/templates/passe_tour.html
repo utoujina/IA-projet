@@ -20,7 +20,7 @@
 {% endblock %}
 
 {% block content_sup %}
-<button id="button_suivant" class="btn btn-secondary" onclick="window.location.href='/game'">Suivant</button>
+<button id="button_suivant" class="btn btn-secondary" onclick="window.location.href='/intermediate_phase'">Suivant</button>
 
 <div class="cards">
     {% for card in cards %}
@@ -31,7 +31,7 @@
 
 {% block scripts_sup %}
 <script>
-    displayMessage("TBot : Le joueur {{current_team[1]}} de l'équipe {{current_team[0]}} est tombé au tour précédent, il passe donc son tour.");
+    displayMessage("TBot : Le coureur {{current_team[1]}} de l'équipe {{current_team[0]}} est tombé au tour précédent, il passe donc son tour.");
     displayMessage("TBot : Appuyez sur suivant pour continuer.");
 </script>
 {% endblock %}

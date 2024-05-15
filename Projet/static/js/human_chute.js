@@ -19,7 +19,6 @@ cards.forEach(card => {
 // Fonction du bouton d'envoie
 function submit_player_choice() {
     const card_selected = document.querySelector('.card.selected');
-    const case_selected = document.querySelector('.case.selected');
     
     var button_suivant = document.getElementById('button_suivant');
     var button_submit = document.getElementById('button_submit');
@@ -33,7 +32,7 @@ function submit_player_choice() {
         var formData = new FormData();
         formData.append('card', card_value);
         
-        fetch('/Chute', {
+        fetch('/chute', {
             method: 'POST',
             body: formData
         })

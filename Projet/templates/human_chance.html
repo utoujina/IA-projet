@@ -3,13 +3,13 @@
 {% from "macro.html" import display_cards %}
 
 {% block style_sup %}
-<link rel="stylesheet" href="/static/style/chance.css">
+<link rel="stylesheet" href="/static/style/human_chance.css">
 {% endblock %}
 
 {% block content_sup %}
 <button id="button_générer" class="btn btn-secondary">Générer</button>
 <button id="button_appliquer" class="btn btn-secondary">Appliquer</button>
-<button id="button_suivant" class="btn btn-secondary" onclick="window.location.href='/game'">Suivant</button>
+<button id="button_suivant" class="btn btn-secondary" onclick="window.location.href='/intermediate_phase'">Suivant</button>
 
 <div class="cards">
     {% for card in cards %}
@@ -32,8 +32,8 @@
 
 {% block scripts_sup %}
 <script>
-    displayMessage("TBot : Le joueur {{current_team[1]}} de l'équipe {{current_team[0]}} est tombé sur une case chance.");
+    displayMessage("TBot : Le coureur {{current_team[1]}} de l'équipe {{current_team[0]}} est tombé sur une case chance.");
     displayMessage("TBot : Appuyez sur générer pour voir quelle carte vous allez tirer !");
 </script>
-<script src="../static/js/chance.js"></script>
+<script src="../static/js/human_chance.js"></script>
 {% endblock %}

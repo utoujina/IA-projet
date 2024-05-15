@@ -33,7 +33,7 @@ document.getElementById("button_appliquer").addEventListener("click", function(e
         formData.append('chance_card', chance_number);
         formData.append('case', case_value);
         
-        fetch('/Chance', {
+        fetch('/chance', {
             method: 'POST',
             body: formData
         })
