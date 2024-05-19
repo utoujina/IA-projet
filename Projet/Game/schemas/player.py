@@ -7,11 +7,12 @@ class Case(BaseModel):
     
     Notes
     -----
-    [number_of_the_case, couloir] where couloir is 0, 1 or 2
+    [number_of_the_case, couloir] where couloir is :
     0 = gauche
     1 = milieu
     2 = droite
-    -1 = sur le coté
+    3 = sur le coté
+    4 = en chute
     """
     case: Tuple[int, int]
 
@@ -23,15 +24,16 @@ class Player(BaseModel):
     ----------
     ID: str
     ranking: int
-    position: Tuple[int, int]
+    position: float
     
     Notes
     -----
     In total, there are 12 players because each team has 3 players.
     """
     ID: str
-    ranking: int = Field(ge=1, le=12)
-    position: tuple[int, int]
+    ranking: int = Field(ge=0, le=12)
+    position: float
+
 
 class Players(BaseModel):
     """

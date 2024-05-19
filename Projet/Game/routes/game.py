@@ -2,14 +2,13 @@ from fastapi import APIRouter, HTTPException, Request, Form
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
 import Game.service.game as service
-import time
 
 router = APIRouter(tags=["Game"])
 templates = Jinja2Templates(directory="templates")
 
 @router.get('/')
 def display_setup_phase(request: Request):
-
+    
     return templates.TemplateResponse(
         "setup_phase.html",
         context={'request': request}
@@ -39,62 +38,61 @@ def game(request: Request):
     new_counter = service.modify_counter(service.get_counter() + 1)
     
     print("Counter : " + str(new_counter))
-    print("Cards = " + str(service.get_cards("Pack")))
     
+    # Phase 1 : Draw cards for all 4 teams
     if(new_counter < 4):
-        # Phase 1 : On tire les cartes pour les 4 équipes
-        # On passe à l'équipe suivante
+        
         ordre = ["ITA", "NLD", "BEL", "DEU"]
         next_team = ordre[new_counter % 4]
         service.modify_current_team(next_team, 0)
         
         return RedirectResponse(url="/game/tirage_carte")
     
+    # Phase 2 : Teams make choices
     else:
-        # Phase 2 : Les équipes font fassent aux choix
-
-        # La partie n'est pas finie
+        
+        # The game is not over
         if (not(service.is_game_over())):
             
-            # Définition de l'odre des joueurs pour la phase de placement des joueurs sur la catre
+            # Definition of the players' odre for the placement phase of the players on the catre
             if(new_counter == 4):
                 service.change_running_order_placement_phase()
                 print("MAJ BEST")
             
-            # On passe par ici tous les 12 tours
+            # We go through here every 12 laps
             if(new_counter > 15 and (new_counter-4)%12 == 0):
                     
-                    # Mise à jour de l'ordre des joueurs en fonction du classement
+                    # Update the order of players according to the ranking
                     service.change_running_order_classement_phase()
                     print("MAJ CLASSEMENT")
                 
-            # On récupère l'odre de jeu
+            # We get the game odre
             ordre = service.get_running_order()
 
-            # Changement du prochain joueur
+            # # We move on to the next player
             next_tour = ordre[(new_counter-4) % 12]
             team = [next_tour[:3], int(next_tour[4:])]
             service.modify_current_team(team[0], team[1])
             
-            # Le joueur passe son tour
-            if(service.get_pos(team[0], team[1])[1] == -1):
+            # The player passes his turn
+            if(service.get_pos(team[0], team[1])[1] == 3):
                 return RedirectResponse(url="/game/passe_tour")
             
-            # Le joueur est tombé à cause d'un autre joueur
-            elif(service.get_pos(team[0], team[1])[1] == -2):
-                service.modify_pos(team[0], team[1], [service.get_pos(team[0], team[1])[0], -1])
+            # The player fell because of another player
+            elif(service.get_pos(team[0], team[1])[1] == 4):
+                service.modify_pos(team[0], team[1], [service.get_pos(team[0], team[1])[0], 3])
                 return RedirectResponse(url="/game/chute")
             
-            # Le joueur est une IA
+            # The player is an AI
             elif(service.get_player_type(team[0]) == "Human"):
                 return RedirectResponse(url="/game/human_choice")
             
-            # Le joueur est humain
+            # The player is human
             else:
                 return RedirectResponse(url="/game/ia_choice")
             
         else:
-            # La partie est terminée
+            # The game is over
             return RedirectResponse(url="/game/result")
         
 
@@ -104,10 +102,10 @@ def tirage_carte(request: Request):
     current_team = service.get_current_team()
     players = service.get_all_players_in_order()
     
-    # Tirage des cartes
+    # Drawing cards
     cards = service.tirage_aléatoire()
     
-    # Ajout aux cartes du joueur
+    # Adding cards to the player
     for card in cards:
         service.push_card(current_team[0], card)
         
@@ -261,16 +259,16 @@ def intermediate_phase(request: Request):
     
     if(counter > 4):
         
-        # Le joueur n'a plus de cartes
+        # The player has no more cards
         if(len(service.get_cards(current_team[0])) == 0 ):
             return RedirectResponse(url="/game/tirage_carte")
         
-        # Le joueur est tombé
-        elif(service.get_pos(current_team[0], current_team[1])[1] == -2):
-            service.modify_pos(current_team[0], current_team[1], [service.get_pos(current_team[0], current_team[1])[0], -1])
+        # The player fell
+        elif(service.get_pos(current_team[0], current_team[1])[1] == 4):
+            service.modify_pos(current_team[0], current_team[1], [service.get_pos(current_team[0], current_team[1])[0], 3])
             return RedirectResponse(url="/game/chute")
         
-        # Le joueur est sur une case chance
+        # The player is on a luck square
         elif(service.is_chance_case(service.get_pos(current_team[0], current_team[1]))):
             return RedirectResponse(url="/game/chance")
         

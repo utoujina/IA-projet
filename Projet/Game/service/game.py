@@ -1,28 +1,54 @@
-from typing import Tuple
 from Game.schemas.player import Player, Card, Type, Team, Players, Counter, Case, Chute
 from Game.database import database
 import random
+
+def couple_to_float(Couple) -> float:
+    """
+    Return the float of the couple
+    
+    Ex:
+    [10, 2] -> 10.2
+    """
+    string = str(Couple[0]) + "." + str(Couple[1])
+    return float(string)
+
+def float_to_couple(float) -> list[int, int]:
+    """
+    Return the of couple of the float
+    
+    Ex:
+    10.2 -> [10,2]
+    9 -> [9,0]
+    """
+    if("." in str(float)):
+        couple_string = str(float).split(".")
+    else:
+        couple_string = [float, "0"]
+    return [int(couple_string[0]), int(couple_string[1])]
 
 def get_pos(Team: str, ID: int) -> Case:
     """
     Return the position of a player
     """
-    return database["players"][Team][ID]["position"]
+    pos = database["players"][Team][ID]["position"]
+    
+    return float_to_couple(pos)
 
 def modify_pos(Team: str, ID: int, New_pos: Case) -> Player:
     """
-    Modify the position of a player
+    Modify the position of a player by increasing the old position
     """
-    old_pos = database["players"][Team][ID]["position"][0]
-    database["players"][Team][ID]["position"][0] = New_pos[0] + old_pos
-    database["players"][Team][ID]["position"][1] = New_pos[1]
+    old_pos = get_pos(Team, ID)
+    new_pos = [old_pos[0] + New_pos[0], New_pos[1]]
+    database["players"][Team][ID]["position"] = couple_to_float(new_pos)
     
     return database["players"][Team][ID]
 
 def modify_straight_pos(Team: str, ID: int, New_pos: Case) -> Player:
-    
-    database["players"][Team][ID]["position"][0] = New_pos[0]
-    database["players"][Team][ID]["position"][1] = New_pos[1]
+    """
+    Modify the position of a player without increasing the old position
+    """
+    database["players"][Team][ID]["position"] = couple_to_float(New_pos)
     
     return database["players"][Team][ID]
 
@@ -30,7 +56,9 @@ def modify_couloir(Team: str, ID: int, new_couloir : int) -> Player:
     """
     Modify the couloir of a player
     """
-    database["players"][Team][ID]["position"][1] = new_couloir
+    current_pos = get_pos(Team, ID)
+    new_pos = [current_pos[0], new_couloir]
+    database["players"][Team][ID]["position"] = couple_to_float(new_pos)
     return database["players"][Team][ID]
     
 def get_ranking(Team: str, ID: int) -> int:
@@ -73,7 +101,7 @@ def get_player_type(Team: str) -> Type:
     
     Notes
     -----
-    A player is either a Human, or an IA
+    A player is either a Human, or an IA (ia1 or ia2)
     """
     return database["type"][Team]
 
@@ -83,7 +111,7 @@ def modify_player_type(Team: str, New_type: str) -> Type:
     
     Notes
     -----
-    A player is either a Human, or an IA
+    A player is either a Human, or an IA (ia1 or ia2)
     """
     database["type"][Team] = New_type
     return database["type"][Team]
@@ -128,7 +156,8 @@ def is_game_over() -> bool:
     
     Notes
     -----
-    The game is over if there is no more card in the main deck
+    The game is over if there are no more cards in the main deck
+    or if a player has reached the last case
     """
     if (len(database["cards"]["Pack"]) == 0):
         return True
@@ -137,10 +166,14 @@ def is_game_over() -> bool:
         return is_player_on_or_above_105()
 
 def is_player_on_or_above_105():
+    """
+    Function checking if a player is above the 105 case
+    Return true if yes, false otherwise
+    """
     for team, players in database["players"].items():
         for player_id, player_info in players.items():
             position = player_info["position"]
-            if position[0] >= 105:
+            if position >= 105:
                 return True
     return False
 
@@ -167,12 +200,16 @@ def get_all_players_in_order() -> Players:
         # Loop sur les players
         for player_data in country_players.values():
             # Récupération des paramètres du joueur
-            player = Player(ID=player_data["ID"], ranking=player_data["ranking"], position=player_data["position"])
+            player = {
+                "ID": player_data["ID"],
+                "ranking": player_data["ranking"],
+                "position": float_to_couple(float(player_data["position"]))
+            }
             # On l'ajoute à la liste globale
             list_player.append(player)
     
     # Triage de la liste globale sur base du classement
-    sorted_players = sorted(list_player, key=lambda x: x.ranking)
+    sorted_players = sorted(list_player, key=lambda x: x["ranking"])
     
     return sorted_players
 
@@ -261,18 +298,22 @@ def change_running_order_classement_phase():
     new_running_order = []
     
     for player in order:
-        new_running_order.append(player.ID)
+        new_running_order.append(player["ID"])
     
     database["running_order"] = new_running_order
     return database["running_order"]
 
 def query_creation(name_of_query: str) -> str:
     """
-    Function that creates the Prolog query.
+    Function that creates the move Prolog query
     
     Notes
     -----
-    
+    It contains : 
+    - the players list
+    - the cards of a player
+    - the current player ID
+    - the current player position
     """
     current_team = database["current_team"]
     players = get_all_players_in_order()
@@ -281,25 +322,30 @@ def query_creation(name_of_query: str) -> str:
     
     players_str = "["
     for player in players:
-        team = player.ID[:3]
-        id = player.ID[4:]
-        x, y = player.position
-        rank = player.ranking
+        team = player["ID"][:3]
+        id = player["ID"][4:]
+        x, y = player["position"]
+        rank = player["ranking"]
         players_str += f"[{rank}, '{team}', {id}, {x}, {y}], "
     players_str = players_str.rstrip(', ') 
     players_str += "]"
     
-    # Construction de la requête Prolog
+    # Construction of the Prolog query
     query = "{}([{},{}], ['{}', {}], [{}, {}] ,[Case, Card]).".format(name_of_query, players_str, cards, current_team[0], current_team[1], current_pos[0], current_pos[1])
     return query
 
 def query_creation_chance(name_of_query: str) -> str:
     """
-    Function that creates the Prolog query.
+    Function that creates the chance Prolog query.
     
     Notes
     -----
-    
+    It contains : 
+    - the players list
+    - the cards of a player
+    - the current player ID
+    - the chance card
+    - the current player card
     """
     current_team = database["current_team"]
     players = get_all_players_in_order()
@@ -308,31 +354,31 @@ def query_creation_chance(name_of_query: str) -> str:
     
     players_str = "["
     for player in players:
-        team = player.ID[:3]
-        id = player.ID[4:]
-        x, y = player.position
-        rank = player.ranking
+        team = player["ID"][:3]
+        id = player["ID"][4:]
+        x, y = player["position"]
+        rank = player["ranking"]
         players_str += f"[{rank}, '{team}', {id}, {x}, {y}], "
     players_str = players_str.rstrip(', ') 
     players_str += "]"
     
-    # Construction de la requête Prolog
+    # Construction of the Prolog query
     query = "{}(['{}',{}], {}, {}, {}, Chance_card, Couloir).".format(name_of_query, current_team[0], current_team[1], current_pos[0], players_str, cards)
     return query
 
 def query_creation_defausse(name_of_query: str) -> str:
     """
-    Function that creates the Prolog query.
+    Function that creates the defausse Prolog query.
     
     Notes
     -----
-    
+    It contains : 
+    - the players cards
     """
     current_team = database["current_team"]
     cards = get_cards(current_team[0])
     
-    # ia1_defausse(Cards, Choice)
-    # Construction de la requête Prolog
+    # Construction of the Prolog query
     query = "{}({}, Card).".format(name_of_query, cards)
     return query
 
@@ -347,10 +393,10 @@ def update_ranking():
         for player_id, player_info in database['players'][team].items():
             all_players.append(player_info)
 
-    # Trier les joueurs en fonction de la coordonnée de leur case (position[0])
-    sorted_players = sorted(all_players, key=lambda x: x['position'][0], reverse=True)
+    # Sort players according to the coordinate of their square (position[0])
+    sorted_players = sorted(all_players, key=lambda x: x['position'], reverse=True)
 
-    # Mettre à jour le classement des joueurs dans la base de données
+    # Update the ranking of players in the database
     for i, player in enumerate(sorted_players, 1):
         database["players"][player['ID'][:3]][int(player['ID'][4:])]['ranking'] = i
 
@@ -364,13 +410,13 @@ def is_occupied(case: Case) -> bool:
         
         for id in database['players'][team]:
 
-            if (database['players'][team][id]['position'] == case):
+            if (get_pos(team, id) == case):
                 return True
     return False
 
 def couloir_is_occupied(num_case: int) -> bool:
     """
-    Return true if all the couloir is occupied
+    Return true if the couloir is occupied
     """
     if(is_occupied([num_case, 0]) and is_occupied([num_case, 1]) and is_occupied([num_case, 2])):
         return True
@@ -409,11 +455,8 @@ def apply_chute(nb_case: int, player: list[Team, int]):
     players = get_all_players_in_order()
     for player in players:
         
-        if player.position[0] == nb_case:
-            print("OKOKOKOK")
-            #modify_couloir(player.ID[:3], int(player.ID[4:]), -2)
-            #modify_pos(case de la chute)
-            modify_straight_pos(player.ID[:3], int(player.ID[4:]), [nb_case, -2])
+        if player["position"][0] == nb_case:
+            modify_straight_pos(player["ID"][:3], int(player["ID"][4:]), [nb_case, 4])
             
 
 def get_chute() -> Chute:
@@ -429,49 +472,33 @@ def modify_chute(new_chute: Chute) -> Chute:
     database["chute"] = new_chute
     return database["chute"]
 
-def change_running_order_chute_phase(num_case: int):
-    order = get_all_players_in_order()
-    new_running_order = []
-    
-    for player in order:
-        if(player.position[0] != num_case):
-            new_running_order.append([player.ID, -1])
-        else:
-            new_running_order.append([player.ID, 1])
-            
-    database["running_order"] = new_running_order
-    return database["running_order"]
-
-def remove_all_chute_running_order():
-    order = get_all_players_in_order()
-    new_running_order = []
-    
-    for player in order:
-        new_running_order.append([player.ID, 1])
-            
-    database["running_order"] = new_running_order
-    return database["running_order"]
 
 def get_final_classement_team():
+    """
+    Return the final classement based on the cumulative time of the teams
+    """
     players = get_all_players_in_order()
     
     scores = {"BEL": 0, "DEU": 0, "NLD": 0, "ITA": 0}
     team_players = {"BEL": [], "DEU": [], "NLD": [], "ITA": []}
     
     for player in players:
-        team_code = player.ID[:3]
-        scores[team_code] += player.ranking
+        team_code = player["ID"][:3]
+        scores[team_code] += player["ranking"]
         team_players[team_code].append(player)
     
     sorted_scores = sorted(scores.items(), key=lambda x: x[1])
     
     sorted_players = []
     for team, _ in sorted_scores:
-        team_players[team].sort(key=lambda x: x.ranking)
+        team_players[team].sort(key=lambda x: x["ranking"])
         sorted_players.extend(team_players[team])
     
     return sorted_players
 
 def get_winner_team():
+    """
+    Return the winner team
+    """
     player = get_final_classement_team()    
-    return player[0].ID[:3]
+    return player[0]["ID"][:3]

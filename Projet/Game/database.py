@@ -9,69 +9,69 @@ database = {
         "BEL":{
             1: {
                 "ID": "BEL 1",
-                "position": [0, 0],
-                "ranking": 9,
+                "position": 0,
+                "ranking": 0,
             },
             2: {
                 "ID": "BEL 2",
-                "position": [0, 0],
-                "ranking": 12,
+                "position": 0,
+                "ranking": 0,
             },
             3: {
                 "ID": "BEL 3",
-                "position": [0, 0],
-                "ranking": 10,
+                "position": 0,
+                "ranking": 0,
             },
         }, 
         "DEU":{
             1: {
                 "ID": "DEU 1",
-                "position": [0, 0],
-                "ranking": 11,
+                "position": 0,
+                "ranking": 0,
             },
             2: {
                 "ID": "DEU 2",
-                "position": [0, 0],
-                "ranking": 8,
+                "position": 0,
+                "ranking": 0,
             },
             3: {
                 "ID": "DEU 3",
-                "position": [0, 0],
-                "ranking": 4,
+                "position": 0,
+                "ranking": 0,
             },
         },
         "NLD":{
             1: {
                 "ID": "NLD 1",
-                "position": [0, 0],
-                "ranking": 7,
+                "position": 0,
+                "ranking": 0,
             },
             2: {
                 "ID": "NLD 2",
-                "position": [0, 0],
-                "ranking": 6,
+                "position": 0,
+                "ranking": 0,
             },
             3: {
                 "ID": "NLD 3",
-                "position": [0, 0],
-                "ranking": 3,
+                "position": 0,
+                "ranking": 0,
             },
         },
         "ITA":{
             1: {
                 "ID": "ITA 1",
-                "position": [0, 0],
-                "ranking": 5,
+                "position": 0,
+                "ranking": 0,
             },
             2: {
                 "ID": "ITA 2",
-                "position": [0, 0],
-                "ranking": 2,
+                "position": 0,
+                "ranking": 0,
             },
             3: {
                 "ID": "ITA 3",
-                "position": [0, 0],
-                "ranking": 1,
+                "position": 0,
+                "ranking": 0,
             },
         }
     },
