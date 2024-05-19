@@ -30,20 +30,8 @@
 nb_coureurs(3).
 nb_equipes(4).
 
-% Règles de réponse
-% regle_rep(+MotClé, +Motif, -Reponse)
-% Associe un mot-clé à un motif et à une réponse correspondante.
-regle_rep(commence, ['qui', 'commence', 'le', 'jeu'], rep_commence).
-regle_rep(commence, ['qui', 'commence', 'la', 'partie'], rep_commence).
-regle_rep(joueur, ['quel', 'joueur', 'commence'], rep_joueur).
-regle_rep(equipe, ['combien', 'joueur', 'équipe'], rep_nb_joueur).
-regle_rep(equipe, ['combien', 'équipe'], rep_nb_equipe).
-regle_rep(equipe, ['bonjour'], rep_bonjour).
-regle_rep(equipe, ['salut'], rep_bonjour).
-regle_rep(equipe, ['hello'], rep_bonjour).
 
-
-% Base case: The intersection of an empty list with any list is an empty list.
+%case de base : L'intersection entre les cas de base.
 intersection([], _, []).
 
 % Cas récursif : Si X est un membre de la deuxième liste, inclure X dans le résultat.
@@ -56,19 +44,21 @@ intersection([X|XS], YS, ZS) :-
     \+ member(X, YS),
     intersection(XS, YS, ZS).
 
-%Liste de mot clé possible des question dans le jeu
-liste_mot_cle([depasser,hello ,case,coureurs,combien,coureur,equipe,commence,qui,jeu,dessus,deplacer,occupee,autre, coureur,dessus,conseillez,carte, secondes,groupe,jouer,joue,italie,belgique,hollande,allemagne,couleur,maillot,bonjour,bonsoir,salut]).
+%Liste de mot clé possible des questions dans le jeu
+liste_mot_cle([depasser,hello ,case,coureurs,combien,coureur,equipe,commence,qui,jeu,dessus,deplacer,occupee,autre, coureur,dessus,conseillez,carte, secondes,groupe,jouer,joue,italie,belgique,hollande,allemagne,couleur,maillot,bonjour,bonsoir,salut,fin]).
 
+
+
+%effectue le lien en fonction des mots clé pour répondre au question
 select_answer(Mtrouve,Answer):- (member(qui,Mtrouve),member(commence,Mtrouve),Answer= ' C est au joueur ayant la plus haute carte secondes qui commence le jeu.';
 member(equipe,Mtrouve),member(combien,Mtrouve),Answer= 'il y trois coureur dans chaque equipe';
 member(depasser,Mtrouve),member(dessus,Mtrouve),Answer='oui, il est permis de doubler en bas de la route pour autant que le coureur arrive sur une place inoccupée. si ce n est pas le cas, le coureur tombe et entraîne avec lui le groupe de coureurs qu il voulait doubler.';
-%Puis-je deplacer un coureur sur une case occupee par un autre coureur ?
 member(deplacer,Mtrouve),member(coureur,Mtrouve),member(occupee,Mtrouve), Answer= 'Non il n est pas possible';
 member(hello,Mtrouve), Answer= 'Bonjour ! Je suis le bot du Tour de France. Comment puis-je vous aider' ;
 member(bonjour,Mtrouve), Answer= 'Bonjour ! Je suis le bot du Tour de France. Comment puis-je vous aider' ;
-member(salut,Mtrouve), Answer= 'Bonjour ! Je suis le bot du Tour de France. Comment puis-je vous aider' ) .
-
-produire_reponses(Mot,Answer) :- trouve_mot_cle(Mot,Mtrouve),select_answer(Mtrouve,Answer), !.
+member(salut,Mtrouve), Answer= 'Bonjour ! Je suis le bot du Tour de France. Comment puis-je vous aider'  ;
+member(fin,Mtrouve), Answer= 'Merci de m avoir consulte';
+member(merci,Mtrouve), Answer= 'je vous en-pris') .
 
 
 %trouver les mots clés du jeu
@@ -145,6 +135,8 @@ rep_nb_equipe(Reponse) :-
     nb_equipes(X),
     atomic_list_concat(['Il y a', X, 'equipes qui participent au tour de France.'], ' ', Reponse).
 
+
+
 % On a pas de fonction delete donc on l'implémente ici
 % delete(+Element, +Liste, -NouvelleListe)
 % Supprime toutes les occurrences de l'élément
@@ -172,6 +164,7 @@ subset([X|Xs], Y) :-
 % Produit une réponse en fonction de la question
 produire_reponse(Question, 'Merci de m\'avoir consulté.') :-
    member(Question, [['fin']]), !.
+
 
 produire_reponse(Question, Reponse) :-
     trouve_mot_cle(Question,Mtrouve),
