@@ -1,3 +1,0 @@
-fastapi
-jinja2
-taut-prolog "déja présent dans les fichier statique. plus besoin de l'installer"

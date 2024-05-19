@@ -1,6 +1,7 @@
 {%extends "empty_template.html" %}
 
 {% from "macro.html" import display_players %}
+{% from "macro.html" import display_players_on_map %}
 
 {% block style %}
 <link rel="stylesheet" href="/static/style/game_template.css">
@@ -30,9 +31,13 @@
 
 <div class="container">
     
-    <div class="row">
-        <div class="col-md-8">
-            <img src="../static/image/carte.png" alt="Carte du jeux" class="img-fluid">
+    <div class="row gap-1">
+        <div class="position-relative" style="width:875px">
+            <img src="../static/image/carte.png" alt="Carte du jeux" class="img-fluid position-absolute" style="width:850px;">
+            {{ display_players_on_map(players, map_positions) }}
+
+
+
         </div>
         <div class="col-md-4">
             

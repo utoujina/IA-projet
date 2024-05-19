@@ -3,27 +3,8 @@
 <tr>
     <td>{{ player.ranking }} :</td>
     <td>{{ player.ID }}</td>
-    <td>{{ player.position[0] }}</td>
-    
-    {% if player.position[1] == 0 %}
-    <td>Gauche</td>
-    
-    {% elif player.position[1] == 1 %}
-    <td>Milieu</td>
-    
-    {% elif player.position[1] == 2 %}
-    <td>Droite</td>
-    
-    {% elif player.position[1] == 3 %}
-    <td>Bas-coté</td>
-    
-    {% elif player.position[1] == 4 %}
-    <td>En chute</td>
-    
-    {% else %}
-    <td>Problème</td>
-    
-    {% endif %}
+    <td>{{ player.position_float }}</td>
+    <td>{{ player.couloir }}</td>
 </tr>
 {% endmacro %}
 
@@ -35,3 +16,36 @@
 {% endmacro %}
 
 
+{% macro display_players_on_map(players, map_positions) %}
+    {% for player in players %}
+        {% if player.ID == "BEL 1" and player.position_float == 0 %}
+            <img src="../static/image/players/{{ player.ID }}.svg" class="position-absolute" width="50" alt="{{ player.ID }}" style="top: 250px; left: 250px">
+        {% elif player.ID == "BEL 2" and player.position_float == 0 %}
+            <img src="../static/image/players/{{ player.ID }}.svg" class="position-absolute" width="50" alt="{{ player.ID }}" style="top: 260px; left: 250px">
+        {% elif player.ID == "BEL 3" and player.position_float == 0 %}
+            <img src="../static/image/players/{{ player.ID }}.svg" class="position-absolute" width="50" alt="{{ player.ID }}" style="top: 270px; left: 250px">
+        {% elif player.ID == "DEU 1" and player.position_float == 0 %}
+            <img src="../static/image/players/{{ player.ID }}.svg" class="position-absolute" width="50" alt="{{ player.ID }}" style="top: 250px; left: 270px">
+        {% elif player.ID == "DEU 2" and player.position_float == 0 %}
+            <img src="../static/image/players/{{ player.ID }}.svg" class="position-absolute" width="50" alt="{{ player.ID }}" style="top: 260px; left: 270px">
+        {% elif player.ID == "DEU 3" and player.position_float == 0 %}
+            <img src="../static/image/players/{{ player.ID }}.svg" class="position-absolute" width="50" alt="{{ player.ID }}" style="top: 270px; left: 270px">
+        {% elif player.ID == "NLD 1" and player.position_float == 0 %}
+            <img src="../static/image/players/{{ player.ID }}.svg" class="position-absolute" width="50" alt="{{ player.ID }}" style="top: 250px; left: 290px">
+        {% elif player.ID == "NLD 2" and player.position_float == 0 %}
+            <img src="../static/image/players/{{ player.ID }}.svg" class="position-absolute" width="50" alt="{{ player.ID }}" style="top: 260px; left: 290px">
+        {% elif player.ID == "NLD 3" and player.position_float == 0 %}
+            <img src="../static/image/players/{{ player.ID }}.svg" class="position-absolute" width="50" alt="{{ player.ID }}" style="top: 270px; left: 290px">
+        {% elif player.ID == "ITA 1" and player.position_float == 0 %}
+            <img src="../static/image/players/{{ player.ID }}.svg" class="position-absolute" width="50" alt="{{ player.ID }}" style="top: 250px; left: 310px">
+        {% elif player.ID == "ITA 2" and player.position_float == 0 %}
+            <img src="../static/image/players/{{ player.ID }}.svg" class="position-absolute" width="50" alt="{{ player.ID }}" style="top: 260px; left: 310px">
+        {% elif player.ID == "ITA 3" and player.position_float == 0 %}
+            <img src="../static/image/players/{{ player.ID }}.svg" class="position-absolute" width="50" alt="{{ player.ID }}" style="top: 270px; left: 310px">
+        {% else %}
+            <img src="../static/image/players/{{ player.ID }}.svg" class="position-absolute" width="50" alt="{{ player.ID }}" style="top: {{ map_positions.get(player.position_float)[0] }}px; left: {{ map_positions.get(player.position_float)[1] }}px">
+        {% endif %}
+    {% endfor %}
+
+
+{% endmacro %}

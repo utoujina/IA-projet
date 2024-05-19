@@ -16,20 +16,22 @@ def display_setup_phase(request: Request):
 
 
 @router.post("/")
-async def submit_choices_setup(request: Request, BEL: str = Form(...), ITA: str = Form(...), DEU: str = Form(...), NLD: str = Form(...)):
-    
+async def submit_choices_setup(request: Request, BEL: str = Form(...), ITA: str = Form(...), DEU: str = Form(...),
+                               NLD: str = Form(...)):
     service.modify_player_type("BEL", BEL)
     service.modify_player_type("ITA", ITA)
     service.modify_player_type("DEU", DEU)
     service.modify_player_type("NLD", NLD)
-    
+
     players = service.get_all_players_in_order()
     current_team = service.get_current_team()
-    
+    map_positions = service.get_current_map_positions()
+
     return templates.TemplateResponse(
         "introduction_phase.html",
-        context={'request': request, 'players': players, 'current_team': current_team}
+        context={'request': request, 'players': players, 'current_team': current_team, 'map_positions': map_positions}
     )
+
 
 @router.get("/game")
 def game(request: Request):
@@ -101,6 +103,7 @@ def tirage_carte(request: Request):
     
     current_team = service.get_current_team()
     players = service.get_all_players_in_order()
+    map_positions = service.get_current_map_positions()
     
     # Drawing cards
     cards = service.tirage_aléatoire()
@@ -111,7 +114,7 @@ def tirage_carte(request: Request):
         
     return templates.TemplateResponse(
         "card_draw_phase.html",
-        context={'request': request, 'players': players, 'current_team': current_team, 'cards': cards}
+        context={'request': request, 'players': players, 'current_team': current_team, 'cards': cards, 'map_positions': map_positions}
     )
 
 @router.get("/game/human_choice")
@@ -121,10 +124,11 @@ def human_choice(request: Request):
     players = service.get_all_players_in_order()
     cards = service.get_cards(current_team[0])
     pos = service.get_pos(current_team[0], current_team[1])
+    map_positions = service.get_current_map_positions()
     
     return templates.TemplateResponse(
         "human_game_phase.html",
-        context={'request': request, 'players': players, 'current_team': current_team, 'cards': cards, 'pos': pos}
+        context={'request': request, 'players': players, 'current_team': current_team, 'cards': cards, 'pos': pos, 'map_positions': map_positions}
     )
 
 @router.get("/game/ia_choice")
@@ -134,12 +138,14 @@ def IA_choice(request: Request):
     players = service.get_all_players_in_order()
     cards = service.get_cards(current_team[0])
     type_player = service.get_player_type(current_team[0])
+    map_positions = service.get_current_map_positions()
+
     
     query = service.query_creation(type_player)
     print(query)
     return templates.TemplateResponse(
         "ia_game_phase.html",
-        context={'request': request, 'players': players, 'current_team': current_team, 'cards': cards, 'query': query}
+        context={'request': request, 'players': players, 'current_team': current_team, 'cards': cards, 'query': query, 'map_positions': map_positions}
     )
 
 @router.get("/game/result")
@@ -147,10 +153,11 @@ def game_result(request: Request):
     
     players = service.get_final_classement_team()
     winner_team = service.get_winner_team()
+    map_positions = service.get_current_map_positions()
 
     return templates.TemplateResponse(
         "result_phase.html",
-        context={'request': request, 'players': players, 'winner': winner_team}
+        context={'request': request, 'players': players, 'winner': winner_team, 'map_positions': map_positions}
     )
 
 
@@ -176,11 +183,12 @@ def chute(request: Request):
     players = service.get_all_players_in_order()
     cards = service.get_cards(current_team[0])
     type_player = service.get_player_type(current_team[0])
+    map_positions = service.get_current_map_positions()
     
     if(type_player == "Human"):
         return templates.TemplateResponse(
             "human_chute.html",
-            context={'request': request, 'players': players, 'current_team': current_team, 'cards': cards}
+            context={'request': request, 'players': players, 'current_team': current_team, 'cards': cards, 'map_positions': map_positions}
         )
     else:
         query = service.query_creation_defausse("ia1_defausse")
@@ -188,7 +196,7 @@ def chute(request: Request):
         print(query)
         return templates.TemplateResponse(
             "ia_chute.html",
-            context={'request': request, 'players': players, 'current_team': current_team, 'cards': cards, 'query': query}
+            context={'request': request, 'players': players, 'current_team': current_team, 'cards': cards, 'query': query, 'map_positions': map_positions}
         )
 
 @router.post("/chute")
@@ -205,10 +213,11 @@ def passe_tour(request: Request):
     players = service.get_all_players_in_order()
     cards = service.get_cards(current_team[0])
     service.modify_couloir(current_team[0], current_team[1], 0)
+    map_positions = service.get_current_map_positions()
     
     return templates.TemplateResponse(
         "passe_tour.html",
-        context={'request': request, 'players': players, 'current_team': current_team, 'cards': cards}
+        context={'request': request, 'players': players, 'current_team': current_team, 'cards': cards, 'map_positions': map_positions}
     )
 
 @router.get("/game/chance")
@@ -217,11 +226,12 @@ def case_chance(request: Request):
     players = service.get_all_players_in_order()
     cards = service.get_cards(current_team[0])
     type_player = service.get_player_type(current_team[0])
+    map_positions = service.get_current_map_positions()
     
     if(type_player == "Human"):
         return templates.TemplateResponse(
             "human_chance.html",
-            context={'request': request, 'players': players, 'current_team': current_team, 'cards': cards}
+            context={'request': request, 'players': players, 'current_team': current_team, 'cards': cards, 'map_positions': map_positions}
         )
     
     else:
@@ -232,7 +242,7 @@ def case_chance(request: Request):
         
         return templates.TemplateResponse(
             "ia_chance.html",
-            context={'request': request, 'players': players, 'current_team': current_team, 'cards': cards, 'query': query}
+            context={'request': request, 'players': players, 'current_team': current_team, 'cards': cards, 'query': query, 'map_positions': map_positions}
         )
 
 @router.post("/chance")

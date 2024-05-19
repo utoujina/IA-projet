@@ -1,6 +1,8 @@
 from Game.schemas.player import Player, Card, Type, Team, Players, Counter, Case, Chute
 from Game.database import database
 import random
+from Game.database import map_positions
+
 
 def couple_to_float(Couple) -> float:
     """
@@ -116,6 +118,9 @@ def modify_player_type(Team: str, New_type: str) -> Type:
     database["type"][Team] = New_type
     return database["type"][Team]
 
+def get_current_map_positions() -> list:
+    return map_positions
+
 def get_current_team() -> list[Team, int]:
     """
     Get the current player
@@ -184,33 +189,51 @@ def set_game_over() -> bool:
     database["game_over"] = True
     return database["game_over"]
 
+
 def get_all_players_in_order() -> Players:
     """
     Return all the players participating to the game by order of ranking
-    
+
     Notes:
     -----
     In total, there are 12 players because each team has 3 players.
     """
     # Liste globale de joueur qui sera trié
     list_player = []
-    
+
     # Loop sur les pays
     for country_players in database["players"].values():
         # Loop sur les players
         for player_data in country_players.values():
+            couloir = ""
+            if round(player_data["position"] - int(player_data["position"]), 1) == 0:
+                couloir = "Gauche"
+            elif round(player_data["position"] - int(player_data["position"]), 1) == 0.1:
+                couloir = "Milieu"
+            elif round(player_data["position"] - int(player_data["position"]), 1) == 0.2:
+                couloir = "Droite"
+            elif round(player_data["position"] - int(player_data["position"]), 1) == 0.3:
+                couloir = "Bas-côté"
+            elif round(player_data["position"] - int(player_data["position"]), 1) == 0.4:
+                couloir = "Chute"
+            else:
+                couloir = "Problème"
             # Récupération des paramètres du joueur
             player = {
                 "ID": player_data["ID"],
                 "ranking": player_data["ranking"],
-                "position": float_to_couple(float(player_data["position"]))
+                "position": float_to_couple(float(player_data["position"])),
+                "position_float": player_data["position"],
+                "couloir": couloir
             }
+
             # On l'ajoute à la liste globale
             list_player.append(player)
-    
+
+
     # Triage de la liste globale sur base du classement
     sorted_players = sorted(list_player, key=lambda x: x["ranking"])
-    
+
     return sorted_players
 
 def tirage_aléatoire() -> list[Card]:
@@ -322,6 +345,7 @@ def query_creation(name_of_query: str) -> str:
     
     players_str = "["
     for player in players:
+        print(player)
         team = player["ID"][:3]
         id = player["ID"][4:]
         x, y = player["position"]
