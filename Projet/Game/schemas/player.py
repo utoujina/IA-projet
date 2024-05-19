@@ -64,7 +64,7 @@ class Type(BaseModel):
     """
     A class representing the type of a player
     """
-    type: Literal["Human", "IA"]
+    type: Literal["Human", "ia1", "ia2"]
 
 class Types(BaseModel):
     """

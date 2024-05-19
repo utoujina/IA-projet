@@ -22,12 +22,12 @@ function format_query_chance() {
     const parts = queryWithQuotes.match(/\[.*?\]|[^[\]\s,]+/g);
 
     // Modifications des derniers arguments
-    parts[parts.length - 3] = chance_card + ", C";
-    parts[parts.length - 4] = parts[parts.length - 4] + "]"
-
+    parts[parts.length - 2] = chance_card;
+    parts[parts.length - 4] = parts[parts.length-4] + "]";
+    
     // Ajout des virgules
-    const formattedQuery = parts.slice(1, parts.length - 2).join(", ");
-    return "ia1_chance(" + formattedQuery + ").";
+    const formattedQuery = parts.slice(1, parts.length).join(", ");
+    return parts[0] + formattedQuery;
 }
 
 document.getElementById("button_générer").addEventListener("click", function(event){
@@ -39,9 +39,9 @@ document.getElementById("button_générer").addEventListener("click", function(e
     session3.query(query_pl);
     
     session3.answer(x => {
-        var IA_case = x.links.C;
+        var IA_case = x.links.Couloir;
         var case_chosen = null;
-        
+        console.log(IA_case);
         if (IA_case == 0) {
             case_chosen = "gauche";
         }

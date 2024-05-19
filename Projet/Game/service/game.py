@@ -19,6 +19,13 @@ def modify_pos(Team: str, ID: int, New_pos: Case) -> Player:
     
     return database["players"][Team][ID]
 
+def modify_straight_pos(Team: str, ID: int, New_pos: Case) -> Player:
+    
+    database["players"][Team][ID]["position"][0] = New_pos[0]
+    database["players"][Team][ID]["position"][1] = New_pos[1]
+    
+    return database["players"][Team][ID]
+
 def modify_couloir(Team: str, ID: int, new_couloir : int) -> Player:
     """
     Modify the couloir of a player
@@ -125,8 +132,17 @@ def is_game_over() -> bool:
     """
     if (len(database["cards"]["Pack"]) == 0):
         return True
+    
     else:
-        return False
+        return is_player_on_or_above_105()
+
+def is_player_on_or_above_105():
+    for team, players in database["players"].items():
+        for player_id, player_info in players.items():
+            position = player_info["position"]
+            if position[0] >= 105:
+                return True
+    return False
 
 def set_game_over() -> bool:
     """
@@ -261,18 +277,63 @@ def query_creation(name_of_query: str) -> str:
     current_team = database["current_team"]
     players = get_all_players_in_order()
     cards = get_cards(current_team[0])
+    current_pos = get_pos(current_team[0], current_team[1])
     
     players_str = "["
     for player in players:
         team = player.ID[:3]
         id = player.ID[4:]
         x, y = player.position
-        players_str += f'["{team}", {id}, {x}, {y}], '
+        rank = player.ranking
+        players_str += f"[{rank}, '{team}', {id}, {x}, {y}], "
     players_str = players_str.rstrip(', ') 
     players_str += "]"
     
     # Construction de la requête Prolog
-    query = '{}(["{}",{}], {}, {},[X, C]).'.format(name_of_query, current_team[0], current_team[1], cards, players_str)
+    query = "{}([{},{}], ['{}', {}], [{}, {}] ,[Case, Card]).".format(name_of_query, players_str, cards, current_team[0], current_team[1], current_pos[0], current_pos[1])
+    return query
+
+def query_creation_chance(name_of_query: str) -> str:
+    """
+    Function that creates the Prolog query.
+    
+    Notes
+    -----
+    
+    """
+    current_team = database["current_team"]
+    players = get_all_players_in_order()
+    cards = get_cards(current_team[0])
+    current_pos = get_pos(current_team[0], current_team[1])
+    
+    players_str = "["
+    for player in players:
+        team = player.ID[:3]
+        id = player.ID[4:]
+        x, y = player.position
+        rank = player.ranking
+        players_str += f"[{rank}, '{team}', {id}, {x}, {y}], "
+    players_str = players_str.rstrip(', ') 
+    players_str += "]"
+    
+    # Construction de la requête Prolog
+    query = "{}(['{}',{}], {}, {}, {}, Chance_card, Couloir).".format(name_of_query, current_team[0], current_team[1], current_pos[0], players_str, cards)
+    return query
+
+def query_creation_defausse(name_of_query: str) -> str:
+    """
+    Function that creates the Prolog query.
+    
+    Notes
+    -----
+    
+    """
+    current_team = database["current_team"]
+    cards = get_cards(current_team[0])
+    
+    # ia1_defausse(Cards, Choice)
+    # Construction de la requête Prolog
+    query = "{}({}, Card).".format(name_of_query, cards)
     return query
 
 def update_ranking():
@@ -350,7 +411,9 @@ def apply_chute(nb_case: int, player: list[Team, int]):
         
         if player.position[0] == nb_case:
             print("OKOKOKOK")
-            modify_couloir(player.ID[:3], int(player.ID[4:]), -2)
+            #modify_couloir(player.ID[:3], int(player.ID[4:]), -2)
+            #modify_pos(case de la chute)
+            modify_straight_pos(player.ID[:3], int(player.ID[4:]), [nb_case, -2])
             
 
 def get_chute() -> Chute:
@@ -388,5 +451,27 @@ def remove_all_chute_running_order():
             
     database["running_order"] = new_running_order
     return database["running_order"]
+
+def get_final_classement_team():
+    players = get_all_players_in_order()
     
-            
+    scores = {"BEL": 0, "DEU": 0, "NLD": 0, "ITA": 0}
+    team_players = {"BEL": [], "DEU": [], "NLD": [], "ITA": []}
+    
+    for player in players:
+        team_code = player.ID[:3]
+        scores[team_code] += player.ranking
+        team_players[team_code].append(player)
+    
+    sorted_scores = sorted(scores.items(), key=lambda x: x[1])
+    
+    sorted_players = []
+    for team, _ in sorted_scores:
+        team_players[team].sort(key=lambda x: x.ranking)
+        sorted_players.extend(team_players[team])
+    
+    return sorted_players
+
+def get_winner_team():
+    player = get_final_classement_team()    
+    return player[0].ID[:3]

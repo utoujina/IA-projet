@@ -23,8 +23,8 @@ document.getElementById("button_submit").addEventListener("click", function(even
     session2.query(queryWithQuotes);
     
     session2.answer(x => {
-        var IA_case = x.links.C;
-        var IA_card = x.links.X;
+        var IA_case = x.links.Case;
+        var IA_card = x.links.Card;
         var case_chosen = null;
         
         if (IA_case == 0) {

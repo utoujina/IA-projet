@@ -6,22 +6,63 @@
 <style>    
     body {
         font-family: Arial, sans-serif;
-        background-color: #fff3cd;
+        background-image: url('../static/image/result.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        overflow-y: hidden;
     }
-        
+    
+    .table {
+        width: 70%;
+        margin: 0 auto;
+    }
+
+    h1 {
+        text-align: center;
+        margin-top: 1em;
+        margin-bottom: 1em;
+        font-weight: bold;
+    }
+    
+    td, th {
+        text-align: center;
+    }
+    
+    caption {
+        font-weight: bold;
+    }
+    
+     
 </style>
 {% endblock %}
 
 {% block content %}
 <body>
-    <h1>L'équipe XX a gagné !</h1>
+    {% if winner == "BEL" %}
+    <h1>L'équipe qui a le meilleur temps cumulé est la Belgique !</h1>
+    
+    {% elif winner == "NLD" %}
+    <h1>L'équipe qui a le meilleur temps cumulé est la Hollande !</h1>
+    
+    {% elif winner == "DEU" %}
+    <h1>L'équipe qui a le meilleur temps cumulé est l'Allemagne !</h1>
+    
+    {% elif winner == "ITA" %}
+    <h1>L'équipe qui a le meilleur temps cumulé est l'Italie !</h1>
+    
+    {% endif %}
+    
+
     <div class="container">
-        <table class="table table-striped">
+        <table class="table table-hover" id="ma_table">
+            <caption>Classement final par équipe</caption>
             <thead>
                 <tr>
-                    <th>Rank</th>
-                    <th>Player</th>
+                    <th>Rang</th>
+                    <th>Joueur</th>
                     <th>Position</th>
+                    <th>Couloir</th>
                 </tr>
                 </thead>
             <tbody>
@@ -35,3 +76,22 @@
     </div>
 </body>
 {% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var table = document.getElementById("ma_table");
+        var rows = table.getElementsByTagName("tr");
+        
+        for (var i = 1; i < rows.length; i++) {
+            var remainder = i % 6;
+            
+            if (remainder == 3 || remainder == 2 || remainder == 4) {
+                rows[i].classList.add("table-secondary");
+            }
+        }
+        
+    });
+</script>
+{% endblock %}
+

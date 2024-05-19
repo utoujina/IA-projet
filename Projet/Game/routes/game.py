@@ -9,7 +9,7 @@ templates = Jinja2Templates(directory="templates")
 
 @router.get('/')
 def display_setup_phase(request: Request):
-        
+
     return templates.TemplateResponse(
         "setup_phase.html",
         context={'request': request}
@@ -34,10 +34,12 @@ async def submit_choices_setup(request: Request, BEL: str = Form(...), ITA: str 
 
 @router.get("/game")
 def game(request: Request):
-    
+
     service.update_ranking()
     new_counter = service.modify_counter(service.get_counter() + 1)
+    
     print("Counter : " + str(new_counter))
+    print("Cards = " + str(service.get_cards("Pack")))
     
     if(new_counter < 4):
         # Phase 1 : On tire les cartes pour les 4 équipes
@@ -78,13 +80,18 @@ def game(request: Request):
             if(service.get_pos(team[0], team[1])[1] == -1):
                 return RedirectResponse(url="/game/passe_tour")
             
+            # Le joueur est tombé à cause d'un autre joueur
+            elif(service.get_pos(team[0], team[1])[1] == -2):
+                service.modify_pos(team[0], team[1], [service.get_pos(team[0], team[1])[0], -1])
+                return RedirectResponse(url="/game/chute")
+            
             # Le joueur est une IA
-            elif(service.get_player_type(team[0]) == "IA"):
-                return RedirectResponse(url="/game/ia_choice")
+            elif(service.get_player_type(team[0]) == "Human"):
+                return RedirectResponse(url="/game/human_choice")
             
             # Le joueur est humain
             else:
-                return RedirectResponse(url="/game/human_choice")
+                return RedirectResponse(url="/game/ia_choice")
             
         else:
             # La partie est terminée
@@ -128,8 +135,10 @@ def IA_choice(request: Request):
     current_team = service.get_current_team()
     players = service.get_all_players_in_order()
     cards = service.get_cards(current_team[0])
-    query = service.query_creation("ia1")
-        
+    type_player = service.get_player_type(current_team[0])
+    
+    query = service.query_creation(type_player)
+    print(query)
     return templates.TemplateResponse(
         "ia_game_phase.html",
         context={'request': request, 'players': players, 'current_team': current_team, 'cards': cards, 'query': query}
@@ -138,11 +147,12 @@ def IA_choice(request: Request):
 @router.get("/game/result")
 def game_result(request: Request):
     
-    players = service.get_all_players_in_order()
-    
+    players = service.get_final_classement_team()
+    winner_team = service.get_winner_team()
+
     return templates.TemplateResponse(
         "result_phase.html",
-        context={'request': request, 'players': players}
+        context={'request': request, 'players': players, 'winner': winner_team}
     )
 
 
@@ -175,7 +185,8 @@ def chute(request: Request):
             context={'request': request, 'players': players, 'current_team': current_team, 'cards': cards}
         )
     else:
-        query = service.query_creation("ia1_defausse")
+        query = service.query_creation_defausse("ia1_defausse")
+        
         print(query)
         return templates.TemplateResponse(
             "ia_chute.html",
@@ -195,6 +206,7 @@ def passe_tour(request: Request):
     current_team = service.get_current_team()
     players = service.get_all_players_in_order()
     cards = service.get_cards(current_team[0])
+    service.modify_couloir(current_team[0], current_team[1], 0)
     
     return templates.TemplateResponse(
         "passe_tour.html",
@@ -215,7 +227,10 @@ def case_chance(request: Request):
         )
     
     else:
-        query = service.query_creation("ia1_defausse")
+        type_player = service.get_player_type(current_team[0])
+        query = service.query_creation_chance(type_player + "_chance")
+        
+        print(query)
         
         return templates.TemplateResponse(
             "ia_chance.html",

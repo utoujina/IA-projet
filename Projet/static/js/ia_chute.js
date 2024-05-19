@@ -16,10 +16,11 @@ function format_query_chute() {
     // Modifications des derniers arguments
     parts[parts.length - 3] = "X";
     parts[parts.length - 4] = parts[parts.length - 4] + "]"
-  
+    
+    
     // Ajout des virgules
     const formattedQuery = parts.slice(1, parts.length - 2).join(", ");
-    return "ia1_defausse(" + formattedQuery + ").";
+    return parts[0] + formattedQuery + ").";
 }
 
 function select_card(IA_choice){
@@ -35,12 +36,10 @@ function select_card(IA_choice){
 document.getElementById("button_générer").addEventListener("click", function(event){
     event.preventDefault();
     
-    query_pl = format_query_chute();
-    
-    session4.query(query_pl);
+    session4.query(pl_query);
     
     session4.answer(x => {
-        var card = x.links.X;
+        var card = x.links.Card;
         
         displayMessage("TBot : L'IA a choisit de se débarasser de la carte " + card + ".");
         displayMessage("TBot : Appuyez sur suivant pour continuer.");

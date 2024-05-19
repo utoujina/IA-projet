@@ -62,3 +62,7 @@ button {
     color: black;
     padding: 10px;
 }
+
+tbody, td, tfoot, th, thead, tr {
+    text-align: center;
+}

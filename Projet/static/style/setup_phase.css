@@ -34,10 +34,6 @@ h1, h2 {
     margin-top: 5px;
 }
 
-.grid-item input[type="radio"] {
-    margin-right: 5px;
-}
-
 #choices-form button {
     margin-top: 20px;
 }
@@ -46,6 +42,6 @@ h1, h2 {
     text-align: center;
 }
 
-input[type="radio"][value="IA"]{
-    margin-left: 10px;
+input[type="radio"]{
+    margin: 5px;
 }

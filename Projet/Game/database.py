@@ -10,63 +10,63 @@ database = {
             1: {
                 "ID": "BEL 1",
                 "position": [0, 0],
-                "ranking": 1,
+                "ranking": 9,
             },
             2: {
                 "ID": "BEL 2",
                 "position": [0, 0],
-                "ranking": 1,
+                "ranking": 12,
             },
             3: {
                 "ID": "BEL 3",
                 "position": [0, 0],
-                "ranking": 1,
+                "ranking": 10,
             },
         }, 
         "DEU":{
             1: {
                 "ID": "DEU 1",
                 "position": [0, 0],
-                "ranking": 1,
+                "ranking": 11,
             },
             2: {
                 "ID": "DEU 2",
                 "position": [0, 0],
-                "ranking": 1,
+                "ranking": 8,
             },
             3: {
                 "ID": "DEU 3",
                 "position": [0, 0],
-                "ranking": 1,
+                "ranking": 4,
             },
         },
         "NLD":{
             1: {
                 "ID": "NLD 1",
                 "position": [0, 0],
-                "ranking": 1,
+                "ranking": 7,
             },
             2: {
                 "ID": "NLD 2",
                 "position": [0, 0],
-                "ranking": 1,
+                "ranking": 6,
             },
             3: {
                 "ID": "NLD 3",
                 "position": [0, 0],
-                "ranking": 1,
+                "ranking": 3,
             },
         },
         "ITA":{
             1: {
                 "ID": "ITA 1",
                 "position": [0, 0],
-                "ranking": 1,
+                "ranking": 5,
             },
             2: {
                 "ID": "ITA 2",
                 "position": [0, 0],
-                "ranking": 1,
+                "ranking": 2,
             },
             3: {
                 "ID": "ITA 3",
